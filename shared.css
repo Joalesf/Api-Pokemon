@@ -29,9 +29,6 @@
 } 
 
 body {
-  background-image: radial-gradient(var(--color-primary) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-color: var(--color-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,18 +45,20 @@ body {
 }
 
 .circulo{
+    position: fixed;         
+    top: 60px;               
+    left: 50%;             
     width: 500px;
     height: 500px;
     background-image: linear-gradient(to bottom, var(--color-secondary) 0%, var(--color-secondary)50%, rgba(255, 255, 255, 0.84) 50%,rgba(255, 255, 255, 0.84) 100%);
     border-radius: 50%;
-    margin-top: 50px;
     border: solid var(--border-width) var(--border-color);
     box-shadow: 8px 8px 0px #2d2d2d60;
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: rotate(-18deg);
-    
+    transform: translateX(-50%) rotate(-18deg);
+     z-index: -1;       
 
 }
 
@@ -225,4 +224,14 @@ button:hover {
     font-weight: 900;
     letter-spacing: -1px;
     transition: transform 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(var(--color-primary) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: var(--color-bg);
+  z-index: -2;
 }
