@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Finder - Favoritos</title>
+    <link rel="stylesheet" href="shared.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        
+        
+        #btn-buscar-fav{
+            width: 120px;
+            height: 50px;
+            background-color: white; /* Blanco en favoritos porque no está activo */
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.4s ease;
+        }
+
+        #btn-historico-fav{
+            width: 150px;
+            height: 50px;
+            background-color: white;
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.4s ease;
+        }
+
+        #btn-vs-fav{
+            width: 90px;
+            height: 50px;
+            background-color: white;
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.4s ease;
+        }
+
+        #btn-favoritos-fav{
+            width: 130px;
+            height: 50px;
+            background-color: var(--color-success); /* Verde agua - activo */
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.3s ease;
+            color: white; 
+        }
+
+        /* Efecto hover para todos los botones */
+        #btn-buscar-fav:hover,
+        #btn-historico-fav:hover,
+        #btn-vs-fav:hover,
+        #btn-favoritos-fav:hover {
+            cursor: pointer;
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* ===== CONTENEDOR DE TARJETAS DE FAVORITOS ===== */
+.contenedor-favoritos {
+    position: fixed; 
+    top: 230px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-height: 300px; /* Altura máxima */
+    min-height: 100px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 20px;
+    align-items: center;
+    overflow-y: auto; /* Scroll vertical cuando hay muchos */
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+/* TARJETA INDIVIDUAL - Mismo estilo que botones pero más grande */
+.tarjeta-favorito {
+    background-color: white;
+    border: solid 2px var(--border-color);
+    box-shadow: var(--shadow);
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 450px; /* Ancho máximo para las tarjetas */
+    min-height: 80px;
+    position: relative;
+    transition: transform 0.3s ease;
+    font-family: var(--font-family);
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Efecto hover igual que los botones */
+.tarjeta-favorito:hover {
+    cursor: pointer;
+    transform: translateY(-4px) scale(1.02);
+}
+
+.columna-imagen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.imagen-favorito {
+    width: 80px;
+    height: 60px;
+    object-fit: contain;
+    border: 3px solid black;
+    background-image: repeating-linear-gradient(
+        45deg,
+        #FFFFFF 0px,
+        #ffffff 8px,
+        #e0e0e0 8px,
+        #e0e0e0 16px
+    );
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.columna-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    height: 100%;
+}
+
+.contenedor-nombre-id {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.numero-favorito {
+    font-size: 15px;
+    color: var(--color-primary);
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+
+/* NOMBRE (BULBASAUR, IVYSAUR) */
+.nombre-favorito {
+    font-size: 15px;
+    color: var(--color-primary);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin: 0;
+    
+}
+
+.tipos-favorito {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    min-width: 50px;
+    max-width: 70px;
+}
+
+.tipo-favorito {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 4px 8px;
+    font-size: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid var(--border-color);
+    text-align: center;
+    width: 100%;
+    min-width: auto;
+}
+
+
+/* Botón eliminar (X roja) */
+.btn-eliminar-favorito {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-error);
+    border: 2px solid var(--border-color);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    font-weight: 900;
+    border-radius: 4px;
+}
+
+.btn-eliminar-favorito:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
+}
+
+.btn-eliminar-favorito::before {
+    content: "🗑️";
+}
+
+/* Botón LIMPIAR TODO - FUERA del contenedor con scroll */
+.btn-limpiar-todo {
+    position: fixed;
+    top: 520px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 60px;
+    background-color: var(--color-error); /* ROJO */
+    border: solid 4px var(--border-color);
+    box-shadow: var(--shadow);
+    color: white;
+    font-family: var(--font-family);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+    z-index: 11;
+    display: block;
+}
+
+.btn-limpiar-todo:hover {
+    transform: translateY(-4px) scale(1.02) translateX(-50%); 
+}
+
+
+.btn-limpiar-todo {
+    margin: 0; 
+}
+
+
+/* Mensaje cuando no hay favoritos */
+.mensaje-sin-favoritos {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    background-color: white;
+    border: 3px dashed #ccc;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mensaje-sin-favoritos p {
+    font-size: 24px;
+    color: #666;
+    margin: 0 0 30px 0;
+    font-family: var(--font-family);
+    font-weight: 900;
+}
+
+.mensaje-sin-favoritos a {
+    color: var(--color-success);
+    text-decoration: none;
+    font-weight: 900;
+    display: inline-block;
+    margin-top: 20px;
+    padding: 15px 30px;
+    border: 3px solid var(--border-color);
+    background-color: white;
+    box-shadow: 4px 4px 0px #2d2d2d;
+    font-size: 18px;
+}
+
+.mensaje-sin-favoritos a:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 6px 6px 0px #2d2d2d;
+}
+
+/* ===== ESTILOS PARA ALERTAS PERSONALIZADAS ===== */
+.swal2-popup {
+    font-family: var(--font-family) !important;
+    border: solid 4px var(--border-color) !important;
+    box-shadow: var(--shadow) !important;
+    border-radius: 10px !important;
+}
+
+.swal2-title {
+    color: var(--color-primary) !important;
+    font-weight: 900 !important;
+    font-size: 22px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -1px !important;
+}
+
+.swal2-html-container {
+    color: #333 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+.swal2-confirm {
+    background-color: var(--color-error) !important;
+    border: solid 3px var(--border-color) !important;
+    color: white !important;
+    font-family: var(--font-family) !important;
+    font-weight: 900 !important;
+    font-size: 16px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.5px !important;
+    padding: 12px 30px !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-cancel {
+    background-color: var(--color-primary) !important;
+    border: solid 3px var(--border-color) !important;
+    color: white !important;
+    font-family: var(--font-family) !important;
+    font-weight: 900 !important;
+    font-size: 16px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.5px !important;
+    padding: 12px 30px !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover,
+.swal2-cancel:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+}
+
+
+    </style>
+</head>
+
+<body>
+<div class="contenedor">
+
+    <div class="titulo">
+        <h1>❤️FAVORITOS</h1>
+    </div>
+
+    <div class="botones">
+        <button id="btn-buscar-fav">&#x1F50E; BUSCAR</button>
+        <button id="btn-historico-fav">&#x1F4DC; HISTÓRICO</button>
+        <button id="btn-vs-fav">&#x2694; VS</button>
+        <button id="btn-favoritos-fav">&#x2764;&#xFE0F; FAVORITOS</button>
+    </div>
+
+   
+    <div id="contenedor-favoritos" class="contenedor-favoritos">
+        
+    </div>
+
+    <button id="btn-limpiar-todo" class="btn-limpiar-todo">
+        🗑️ LIMPIAR TODOS
+    </button>
+
+
+
+    <div class="circulo"> 
+        <div class="linea">
+            <div class="circulo1"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    
+    document.getElementById('btn-buscar-fav').addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
+
+   
+    document.getElementById('btn-historico-fav').addEventListener('click', function() {
+        
+    });
+
+    document.getElementById('btn-vs-fav').addEventListener('click', function() {
+        
+    });
+
+    // ===== FUNCIONES PARA CARGAR Y MOSTRAR FAVORITOS =====
+
+async function cargarFavoritos() {
+    console.log("Cargando favoritos...");
+    
+    // 1. Obtener favoritos del localStorage
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    console.log("Favoritos encontrados:", favoritos);
+    
+    // 2. Obtener contenedor
+    const contenedor = document.getElementById('contenedor-favoritos');
+    
+    // 3. Limpiar contenedor completamente
+    contenedor.innerHTML = '';
+    
+    // 4. Verificar si hay favoritos
+    if (favoritos.length === 0) {
+        contenedor.innerHTML = `
+            <div class="mensaje-sin-favoritos">
+                <p>No tienes Pokémon favoritos aún. ¡Agrega algunos con el botón ❤️!</p>
+                <a href="index.html">← VOLVER AL BUSCADOR</a>
+            </div>
+        `;
+        
+        // Ocultar botón "Limpiar todo" si no hay favoritos
+        document.getElementById('btn-limpiar-todo').style.display = 'none';
+        return;
+    }
+    
+    // 5. MOSTRAR botón "Limpiar todo" si hay favoritos
+    document.getElementById('btn-limpiar-todo').style.display = 'block';
+    
+    // 6. Ordenar por ID (#1, #2, #3)
+    favoritos.sort((a, b) => a.id - b.id);
+    
+    // 7. Cargar cada favorito
+    for (const favorito of favoritos) {
+        console.log("Procesando favorito:", favorito);
+        await crearTarjetaFavorito(favorito, contenedor);
+    }
+    
+    
+}
+
+
+// Función para crear una tarjeta de favorito
+async function crearTarjetaFavorito(favorito, contenedor) {
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${favorito.id || favorito.nombre}`);
+        
+        if (!response.ok) {
+            console.error(`Pokémon ${favorito.nombre} no encontrado en API`);
+            crearTarjetaError(favorito, contenedor);
+            return;
+        }
+        
+        const pokemonData = await response.json();
+        const imagenUrl = pokemonData.sprites.front_default || pokemonData.sprites.other['official-artwork'].front_default;
+        
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'tarjeta-favorito';
+        tarjeta.innerHTML = `
+            <button class="btn-eliminar-favorito" onclick="eliminarDeFavoritos(${favorito.id}, '${favorito.nombre}')" 
+                    title="Eliminar de favoritos"></button>
+            
+            <div class="columna-imagen">
+                <img src="${imagenUrl}" alt="${pokemonData.name}" class="imagen-favorito">
+            </div>
+            
+            <div class="columna-info">
+                <div class="contenedor-nombre-id">
+                    <p class="numero-favorito">#${pokemonData.id}</p>
+                    <p class="nombre-favorito">${pokemonData.name.toUpperCase()}</p>
+                </div>
+                <div class="tipos-favorito">
+                    ${pokemonData.types.map(t => 
+                        `<span class="tipo-favorito">${t.type.name.toUpperCase()}</span>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+        
+        contenedor.appendChild(tarjeta);
+        
+    } catch (error) {
+        console.error(`Error cargando favorito ${favorito.nombre}:`, error);
+        crearTarjetaError(favorito, contenedor);
+    }
+}
+
+// Función para crear tarjeta de error
+function crearTarjetaError(favorito, contenedor) {
+    const tarjetaError = document.createElement('div');
+    tarjetaError.className = 'tarjeta-favorito';
+    tarjetaError.innerHTML = `
+        <button class="btn-eliminar-favorito" onclick="eliminarDeFavoritos(${favorito.id}, '${favorito.nombre}')">🗑️</button>
+        
+        <div class="columna-imagen">
+            <div class="imagen-favorito" style="background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 10px; color: #999;">Sin imagen</span>
+            </div>
+        </div>
+        
+        <div class="columna-info">
+            <div class="contenedor-nombre-id">
+                <p class="numero-favorito">#${favorito.id}</p>
+                <p class="nombre-favorito">${favorito.nombre.toUpperCase()}</p>
+            </div>
+            <div class="tipos-favorito">
+                <span class="tipo-favorito">ERROR</span>
+            </div>
+        </div>
+    `;
+    contenedor.appendChild(tarjetaError);
+}
+
+// Función para eliminar un Pokémon de favoritos
+async function eliminarDeFavoritos(id, nombre) {
+    const resultado = await Swal.fire({
+        title: 'ELIMINAR FAVORITO',
+        html: `¿Estás seguro de eliminar a <strong>${nombre.toUpperCase()}</strong> de favoritos?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'SÍ, ELIMINAR',
+        cancelButtonText: 'CANCELAR',
+        customClass: {
+            popup: 'swal2-custom-popup'
+        },
+        buttonsStyling: false,
+        reverseButtons: true
+    });
+    
+    if (resultado.isConfirmed) {
+        // 1. Obtener favoritos actuales
+        const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+        
+        // 2. Filtrar para eliminar el Pokémon
+        const nuevosFavoritos = favoritos.filter(fav => fav.id !== id);
+        
+        // 3. Guardar en localStorage
+        localStorage.setItem('pokemon_favoritos', JSON.stringify(nuevosFavoritos));
+        
+        // 4. Recargar la lista
+        cargarFavoritos();
+        
+        // 5. Mostrar mensaje de éxito
+        Swal.fire({
+            title: '¡ELIMINADO!',
+            html: `¡<strong>${nombre.toUpperCase()}</strong> eliminado de favoritos!`,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal2-custom-popup'
+            },
+            buttonsStyling: false
+        });
+    }
+}
+
+async function limpiarTodosFavoritos() {
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    
+    if (favoritos.length === 0) {
+        Swal.fire({
+            title: 'SIN FAVORITOS',
+            text: 'No hay favoritos para eliminar',
+            icon: 'info',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal2-custom-popup'
+            },
+            buttonsStyling: false
+        });
+        return;
+    }
+    
+    const resultado = await Swal.fire({
+        title: 'ELIMINAR TODOS',
+        html: `¿Estás seguro de eliminar <strong>TODOS</strong> los favoritos?<br>(${favoritos.length} Pokémon)`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'SÍ, ELIMINAR TODOS',
+        cancelButtonText: 'CANCELAR',
+        customClass: {
+            popup: 'swal2-custom-popup'
+        },
+        buttonsStyling: false,
+        reverseButtons: true
+    });
+    
+    if (resultado.isConfirmed) {
+        // 1. Eliminar todos los favoritos
+        localStorage.removeItem('pokemon_favoritos');
+        
+        // 2. Recargar la vista
+        cargarFavoritos();
+        
+        // 3. Ocultar el botón después de limpiar
+        document.getElementById('btn-limpiar-todo').style.display = 'none';
+        
+        // 4. Mostrar mensaje de éxito
+        Swal.fire({
+            title: '¡ELIMINADOS!',
+            text: '¡Todos los favoritos han sido eliminados!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'swal2-custom-popup'
+            },
+            buttonsStyling: false
+        });
+    }
+}
+
+// ===== CONFIGURAR EVENT LISTENERS =====
+
+// 1. Cuando se carga la página, cargar favoritos
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Página de favoritos cargada");
+    cargarFavoritos();
+});
+
+// 2. Configurar botón "LIMPIAR TODO"
+document.addEventListener('DOMContentLoaded', function() {
+    const btnLimpiarTodo = document.getElementById('btn-limpiar-todo');
+    if (btnLimpiarTodo) {
+        btnLimpiarTodo.addEventListener('click', limpiarTodosFavoritos);
+    }
+
+});
+
+// 3. Botones de navegación
+document.getElementById('btn-buscar-fav').addEventListener('click', function() {
+    window.location.href = 'index.html';
+});
+
+// 4. Función de debug para verificar
+function verificarFavoritos() {
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    console.log('=== VERIFICACIÓN DE FAVORITOS ===');
+    console.log('Total de favoritos:', favoritos.length);
+    console.log('Lista de favoritos:', favoritos);
+    console.log('=== FIN VERIFICACIÓN ===');
+}
+
+// Llama a esta función para verificar
+verificarFavoritos();
+
+</script>
+</body>
+</html>

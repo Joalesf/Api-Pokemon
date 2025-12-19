@@ -48,6 +48,10 @@ const resultado = document.getElementById("resultado");
 const CACHE_KEY = 'pokemon_cache';
 const CACHE_EXPIRY_HOURS = 24;
 
+document.getElementById('btn-favoritos').addEventListener('click', function() {
+    window.location.href = 'favoritos.html';
+});
+
 function inicializarCache() {
     if (!localStorage.getItem(CACHE_KEY)) {
         localStorage.setItem(CACHE_KEY, JSON.stringify({}));
@@ -265,7 +269,7 @@ async function buscarHabilidad(valor) {
   `;
 }
 
-// Función para agregar a favoritos
+// Función para agregar a favoritos SIN alertas
 function agregarAFavoritos(nombre, id) {
     const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
     
@@ -273,18 +277,33 @@ function agregarAFavoritos(nombre, id) {
     const yaEsFavorito = favoritos.some(fav => fav.id === id);
     
     if (!yaEsFavorito) {
+        // Agregar a favoritos
         favoritos.push({ nombre, id, fecha: new Date().toISOString() });
         localStorage.setItem('pokemon_favoritos', JSON.stringify(favoritos));
-        alert(`¡${nombre.toUpperCase()} agregado a favoritos!`);
+        
+        // Animar el botón para dar feedback visual
+        const btn = event.target;
+        btn.style.backgroundColor = '#ff5ca1'; // Cambiar color momentáneo
+        btn.innerHTML = '❤️'; // Cambiar a corazón lleno
+        
+        // Restaurar después de 0.5 segundos
+        setTimeout(() => {
+            btn.style.backgroundColor = 'pink';
+            btn.innerHTML = '🤍';
+        }, 500);
     } else {
-        alert(`¡${nombre.toUpperCase()} ya está en favoritos!`);
+        // Si ya está en favoritos, solo animar el botón
+        const btn = event.target;
+        btn.style.backgroundColor = '#ff5ca1'; // Cambiar color momentáneo
+        btn.innerHTML = '❤️'; // Cambiar a corazón lleno
+        
+        // Restaurar después de 0.5 segundos
+        setTimeout(() => {
+            btn.style.backgroundColor = 'pink';
+            btn.innerHTML = '🤍';
+        }, 500);
     }
 }
-
-// PASO 10: Inicializar al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    inicializarCache();
-});
 
 </script>
 
@@ -422,6 +441,19 @@ img{
     margin-top: 20px;
     font-size: 18px;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Agrega estos efectos hover */
+.btn-favoritos2:hover {
+    background-color: #ff7eb9; /* Rosa más oscuro */
+    transform: translateY(-2px) scale(1.05);
+}
+
+.btn-favoritos2:active {
+    background-color: #ff5ca1; /* Rosa más intenso */
+    transform: translateY(0) scale(0.95);
+    box-shadow: 2px 2px 0px #2d2d2d;
 }
 
 /* Estilos para el header de Pokémon Data */
