@@ -52,6 +52,12 @@ document.getElementById('btn-favoritos').addEventListener('click', function() {
     window.location.href = 'favoritos.html';
 });
 
+document.getElementById('btn-historico').addEventListener('click', function() {
+    window.location.href = 'historico.html';
+});
+
+
+
 function inicializarCache() {
     if (!localStorage.getItem(CACHE_KEY)) {
         localStorage.setItem(CACHE_KEY, JSON.stringify({}));

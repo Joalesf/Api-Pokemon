@@ -641,6 +641,10 @@ document.getElementById('btn-buscar-fav').addEventListener('click', function() {
     window.location.href = 'index.html';
 });
 
+document.getElementById('btn-historico-fav').addEventListener('click', function() {
+    window.location.href = 'historico.html';
+});
+
 // 4. Función de debug para verificar
 function verificarFavoritos() {
     const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
