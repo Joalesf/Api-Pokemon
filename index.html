@@ -40,156 +40,38 @@
 </body>
 </html>
 
+<script src="shared.js"></script>
+
 <script>
-    const btnBuscar = document.getElementById("btn-buscar1");
+document.getElementById("btn-favoritos").addEventListener("click", () => {
+    window.location.href = "favoritos.html";
+});
+
+const btnBuscar = document.getElementById("btn-buscar1");
 const input = document.getElementById("busqueda");
 const filtro = document.getElementById("filtro");
 const resultado = document.getElementById("resultado");
-const CACHE_KEY = 'pokemon_cache';
-const CACHE_EXPIRY_HOURS = 24;
-
-document.getElementById('btn-favoritos').addEventListener('click', function() {
-    window.location.href = 'favoritos.html';
-});
-
-document.getElementById('btn-historico').addEventListener('click', function() {
-    window.location.href = 'historico.html';
-});
-
-
-
-function inicializarCache() {
-    if (!localStorage.getItem(CACHE_KEY)) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({}));
-    }
-}
-
-function obtenerCache() {
-    const cacheData = localStorage.getItem(CACHE_KEY);
-    console.log("🔍 obtenerCache() llamado. Datos RAW:", cacheData);
-    
-    if (!cacheData) {
-        console.log("📭 Cache vacío o no existe");
-        return {};
-    }
-    
-    try {
-        const parsed = JSON.parse(cacheData);
-        console.log("✅ Cache parseado. Claves:", Object.keys(parsed));
-        return parsed;
-    } catch (e) {
-        console.error("❌ Error parseando cache:", e);
-        return {};
-    }
-}
-
-// Guardar un Pokémon en el cache
-function guardarEnCache(pokemonId, pokemonData) {
-    const cache = obtenerCache();
-    cache[pokemonId] = {
-        data: pokemonData,
-        timestamp: Date.now(),
-        expiry: CACHE_EXPIRY_HOURS * 60 * 60 * 1000 // Convertir horas a milisegundos
-    };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-}
-
-// Buscar un Pokémon en el cache
-function buscarEnCache(pokemonId) {
-    const cache = obtenerCache();
-    const cachedItem = cache[pokemonId];
-    
-    if (cachedItem) {
-        // Verificar si el cache ha expirado
-        const now = Date.now();
-        const isExpired = (now - cachedItem.timestamp) > cachedItem.expiry;
-        
-        if (!isExpired) {
-            console.log(`Pokémon ${pokemonId} encontrado en cache`);
-            return cachedItem.data;
-        } else {
-            console.log(`Cache para ${pokemonId} ha expirado`);
-            // Eliminar el item expirado del cache
-            delete cache[pokemonId];
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-        }
-    }
-    return null;
-}
-
-// Limpiar cache expirado
-function limpiarCacheExpirado() {
-    const cache = obtenerCache();
-    const now = Date.now();
-    let cambios = false;
-    
-    for (const key in cache) {
-        if ((now - cache[key].timestamp) > cache[key].expiry) {
-            delete cache[key];
-            cambios = true;
-        }
-    }
-    
-    if (cambios) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-    }
-}
 
 btnBuscar.addEventListener("click", buscar);
 
 async function buscar() {
-  const valor = input.value.toLowerCase().trim();
-  if (!valor) return;
+    const valor = input.value.toLowerCase().trim();
+    if (!valor) return;
 
-  resultado.innerHTML = "<p>⏳ Buscando...</p>";
+    resultado.innerHTML = `<p class="loading">CARGANDO DATOS...</p>`;
 
-  try {
-    if (filtro.value === "POKEMON") {
-      buscarPokemon(valor);
-    } else {
-      buscarHabilidad(valor);
-    }
-  } catch (error) {
-    resultado.innerHTML = "<p>❌ Error en la búsqueda</p>";
-  }
-}
-
-async function obtenerCadenaEvolutiva(pokemon) {
-    // 1. Ir a species
-    const responseSpecies = await fetch(pokemon.species.url);
-    const speciesData = await responseSpecies.json();
-
-    // 2. Ir a evolution chain
-    const responseEvo = await fetch(speciesData.evolution_chain.url);
-    const evoData = await responseEvo.json();
-
-    return extraerEvolucionesPorNivel(evoData.chain);
-}
-
-function extraerEvolucionesPorNivel(chain) {
-    const niveles = [];
-
-    function recorrer(nodo, nivel = 0) {
-        if (!niveles[nivel]) {
-            niveles[nivel] = [];
+    try {
+        if (filtro.value === "POKEMON") {
+            await buscarPokemon(valor);
+        } else {
+            await buscarHabilidad(valor);
         }
-
-        niveles[nivel].push(nodo.species.name);
-
-        nodo.evolves_to.forEach(evo => recorrer(evo, nivel + 1));
+    } catch {
+        resultado.innerHTML = `
+        <div class="error-mensaje">
+            <p>Error: ${filtro.value} NO ENCOTRADA</p>
+        </div>`;
     }
-
-    recorrer(chain);
-    return niveles;
-}
-
-// Agrega esta función de debug
-function debugLocalStorage() {
-    console.log("=== DEBUG LOCALSTORAGE ===");
-    console.log("1. CACHE_KEY existe?", localStorage.getItem(CACHE_KEY) ? "SÍ" : "NO");
-    console.log("2. Contenido de pokemon_cache:", JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'));
-    console.log("3. Todas las claves en localStorage:", Object.keys(localStorage));
-    console.log("=== FIN DEBUG ===");
 }
 
 // Modifica buscarPokemon con más logs
@@ -286,14 +168,15 @@ ${evoluciones.map((nivel, index) => `
     <div class="nivel-evo">
 
         <div class="evo-grupo">
-            ${nivel.map(nombre => `
-                <button class="evo-btn" onclick="buscarPokemon('${nombre}')">
-                    <img class="imgEvo"
-                        src="https://img.pokemondb.net/sprites/home/normal/${nombre}.png"
-                        alt="${nombre}">
-                    <span>${nombre}</span>
-                </button>
-            `).join("")}
+           ${nivel.map(nombre => `
+    <button class="evo-btn ${nombre === pokemon.name ? 'evo-actual' : ''}"
+            onclick="buscarPokemon('${nombre}')">
+        <img class="imgEvo"
+            src="https://img.pokemondb.net/sprites/home/normal/${nombre}.png"
+            alt="${nombre}">
+        <span>${nombre}</span>
+    </button>
+`).join("")}
         </div>
 
         ${index < evoluciones.length - 1 ? `<div class="flecha">➜</div>` : ""}
@@ -313,23 +196,37 @@ async function buscarHabilidad(valor) {
 
   const data = await response.json();
 
-  const descripcion = data.effect_entries.find(e => e.language.name === "es");
+  const descripcion = data.flavor_text_entries.find(e => e.language.name === "es");
 
   resultado.innerHTML = `
     <div class="card">
-      <h2>${data.name.toUpperCase()}</h2>
-      <p>${descripcion ? descripcion.effect : "Sin descripción en español"}</p>
-      <h3>Pokémon con esta habilidad:</h3>
-      <ul>
-        ${data.pokemon.slice(0, 10).map(p =>
-          `<li onclick="buscarPokemon('${p.pokemon.name}')">${p.pokemon.name}</li>`
-        ).join("")}
-      </ul>
+        <div class="tituloH">
+      <h2>✨ ${data.name.toUpperCase()}</h2>
+      <div class="idHabilidad">#${data.id}</div>
+        </div>
+      <div class="lineaCard"></div>
+      <div class="efectoDescripcion">
+        <h3>Efecto</h3>
+       ${descripcion.flavor_text.replace(/\n|\f/g, " ")}
+        </div>
+      <h3 class="PokemonContador">POKÉMON CON ESTA HABILIDAD (${data.pokemon.length})</h3>
+      <div class="pokemon-lista">
+  ${data.pokemon.map(p => `
+    <button class="pokemon-btn" onclick="buscarPokemon('${p.pokemon.name}')">
+      <img 
+        src="https://img.pokemondb.net/sprites/home/normal/${p.pokemon.name}.png"
+        alt="${p.pokemon.name}"
+        onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'"
+      >
+      <span>${p.pokemon.name}</span>
+    </button>
+  `).join("")}
+</div>
     </div>
   `;
 }
 
-// Función para agregar a favoritos SIN alertas
+// Función para agregar a favoritos
 function agregarAFavoritos(nombre, id) {
     const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
     
@@ -337,35 +234,15 @@ function agregarAFavoritos(nombre, id) {
     const yaEsFavorito = favoritos.some(fav => fav.id === id);
     
     if (!yaEsFavorito) {
-        // Agregar a favoritos
         favoritos.push({ nombre, id, fecha: new Date().toISOString() });
         localStorage.setItem('pokemon_favoritos', JSON.stringify(favoritos));
-        
-        // Animar el botón para dar feedback visual
-        const btn = event.target;
-        btn.style.backgroundColor = '#ff5ca1'; // Cambiar color momentáneo
-        btn.innerHTML = '❤️'; // Cambiar a corazón lleno
-        
-        // Restaurar después de 0.5 segundos
-        setTimeout(() => {
-            btn.style.backgroundColor = 'pink';
-            btn.innerHTML = '🤍';
-        }, 500);
     } else {
-        // Si ya está en favoritos, solo animar el botón
-        const btn = event.target;
-        btn.style.backgroundColor = '#ff5ca1'; // Cambiar color momentáneo
-        btn.innerHTML = '❤️'; // Cambiar a corazón lleno
-        
-        // Restaurar después de 0.5 segundos
-        setTimeout(() => {
-            btn.style.backgroundColor = 'pink';
-            btn.innerHTML = '🤍';
-        }, 500);
+        alert(`¡${nombre.toUpperCase()} ya está en favoritos!`);
     }
 }
 
 </script>
+
 
 <style>
 .card {
@@ -503,19 +380,6 @@ function agregarAFavoritos(nombre, id) {
     margin-top: 20px;
     font-size: 18px;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-/* Agrega estos efectos hover */
-.btn-favoritos2:hover {
-    background-color: #ff7eb9; /* Rosa más oscuro */
-    transform: translateY(-2px) scale(1.05);
-}
-
-.btn-favoritos2:active {
-    background-color: #ff5ca1; /* Rosa más intenso */
-    transform: translateY(0) scale(0.95);
-    box-shadow: 2px 2px 0px #2d2d2d;
 }
 
 .evoluciones-Titulo {
@@ -576,6 +440,7 @@ function agregarAFavoritos(nombre, id) {
     padding: 6px;
     cursor: pointer;
     font-family: inherit;
+    transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
 .imgEvo {
@@ -654,6 +519,16 @@ function agregarAFavoritos(nombre, id) {
     font-size: 14px;
 }
 
+/* Efecto hover opcional */
+.origen-text.cache:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+}
+
+.origen-text.api:hover {
+    background-color: #00acc1;
+    transform: translateY(-1px);
+}
 
    #resultado {
     margin-top: 300px;
@@ -683,6 +558,150 @@ img {
         #e0e0e0 8px,
         #e0e0e0 16px
     );
+}
+
+.loading {
+    font-family: 'Courier New', monospace;
+    font-size: 40px;
+    font-weight: bold;
+    animation: parpadeo 1s infinite;
+}
+
+@keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.error-mensaje {
+    width: 420px;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: var(--color-error);
+    border: 4px solid var(--border-color);
+    box-shadow: var(--shadow);
+    text-align: center;
+    font-family: var(--font-family);
+    font-weight: bold;
+    font-size: 25px;
+    color: white;
+}
+
+.evo-actual {
+    background-color: #4ecdc4; /* celeste */
+    border: 3px solid black;
+    box-shadow: 6px 6px 0px #2d2d2d;
+    transform: scale(1.05);
+}
+
+.evo-actual span {
+    font-weight: bold;
+    color: black;
+}
+
+
+.evo-btn:hover {
+    background-color: var(--color-accent); /* amarillo Pokémon */
+    transform: translateY(-4px) scale(1.05);
+    cursor: pointer;
+}
+
+.tituloH {
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+    font-family: 'Courier New', monospace;
+}
+
+.idHabilidad {
+    width: auto;
+    height: auto;
+    padding: 5px;
+    background-color: var(--color-accent);
+    border: solid black 2px;
+    font-weight: bold;
+}
+
+.efectoDescripcion{
+    background-color: rgb(209, 206, 206);
+    border: solid black 2px;
+    width: 360px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: black;
+    padding: 10px;
+}
+
+h3{
+    font-family: 'Courier New', monospace;
+    margin-top: 0px;
+}
+
+.PokemonContador{
+    width: 90%;
+    align-self: flex-start; 
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    font-family: 'Courier New', monospace;
+}
+
+/* CONTENEDOR CON SCROLL */
+.pokemon-lista {
+    width: 360px;
+    max-height: 260px; /* altura visible */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 por fila */
+    gap: 5px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 2px solid black;
+    background-color: #f0f0f0;
+}
+
+/* BOTÓN POKÉMON */
+.pokemon-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid black;
+    box-shadow: 3px 3px 0 #000;
+    padding: 6px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.pokemon-btn img {
+    width: 48px;
+    height: 48px;
+    background: none;
+    border: none;
+}
+
+.pokemon-btn span {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* HOVER */
+.pokemon-btn:hover {
+    background-color: var(--color-accent); /* amarillo */
+    transform: translateY(-3px) scale(1.05);
 }
 
 </style>
