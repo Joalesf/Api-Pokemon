@@ -45,6 +45,85 @@
 const input = document.getElementById("busqueda");
 const filtro = document.getElementById("filtro");
 const resultado = document.getElementById("resultado");
+const CACHE_KEY = 'pokemon_cache';
+const CACHE_EXPIRY_HOURS = 24;
+
+function inicializarCache() {
+    if (!localStorage.getItem(CACHE_KEY)) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({}));
+    }
+}
+
+function obtenerCache() {
+    const cacheData = localStorage.getItem(CACHE_KEY);
+    console.log("🔍 obtenerCache() llamado. Datos RAW:", cacheData);
+    
+    if (!cacheData) {
+        console.log("📭 Cache vacío o no existe");
+        return {};
+    }
+    
+    try {
+        const parsed = JSON.parse(cacheData);
+        console.log("✅ Cache parseado. Claves:", Object.keys(parsed));
+        return parsed;
+    } catch (e) {
+        console.error("❌ Error parseando cache:", e);
+        return {};
+    }
+}
+
+// Guardar un Pokémon en el cache
+function guardarEnCache(pokemonId, pokemonData) {
+    const cache = obtenerCache();
+    cache[pokemonId] = {
+        data: pokemonData,
+        timestamp: Date.now(),
+        expiry: CACHE_EXPIRY_HOURS * 60 * 60 * 1000 // Convertir horas a milisegundos
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+
+// Buscar un Pokémon en el cache
+function buscarEnCache(pokemonId) {
+    const cache = obtenerCache();
+    const cachedItem = cache[pokemonId];
+    
+    if (cachedItem) {
+        // Verificar si el cache ha expirado
+        const now = Date.now();
+        const isExpired = (now - cachedItem.timestamp) > cachedItem.expiry;
+        
+        if (!isExpired) {
+            console.log(`Pokémon ${pokemonId} encontrado en cache`);
+            return cachedItem.data;
+        } else {
+            console.log(`Cache para ${pokemonId} ha expirado`);
+            // Eliminar el item expirado del cache
+            delete cache[pokemonId];
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+        }
+    }
+    return null;
+}
+
+// Limpiar cache expirado
+function limpiarCacheExpirado() {
+    const cache = obtenerCache();
+    const now = Date.now();
+    let cambios = false;
+    
+    for (const key in cache) {
+        if ((now - cache[key].timestamp) > cache[key].expiry) {
+            delete cache[key];
+            cambios = true;
+        }
+    }
+    
+    if (cambios) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+    }
+}
 
 btnBuscar.addEventListener("click", buscar);
 
@@ -65,44 +144,103 @@ async function buscar() {
   }
 }
 
-async function buscarPokemon(valor) {
-  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${valor}`);
-  if (!response.ok) throw new Error("No encontrado");
-
-  const data = await response.json();
-  renderPokemon(data);
+// Agrega esta función de debug
+function debugLocalStorage() {
+    console.log("=== DEBUG LOCALSTORAGE ===");
+    console.log("1. CACHE_KEY existe?", localStorage.getItem(CACHE_KEY) ? "SÍ" : "NO");
+    console.log("2. Contenido de pokemon_cache:", JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'));
+    console.log("3. Todas las claves en localStorage:", Object.keys(localStorage));
+    console.log("=== FIN DEBUG ===");
 }
 
-function renderPokemon(pokemon) {
-  resultado.innerHTML = `
-    <div class="card">
-        <img src="${pokemon.sprites.front_default}">
-      <h2>#${pokemon.id} ${pokemon.name.toUpperCase()}</h2>
-      <div class="lineaCard"></div>
-      <p class="tiposPokemon">${pokemon.types.map(t => `<span class="tipo">${t.type.name}</span>`).join("")}</p>
-      
-      <div class="habilidadesPokemon">
-        <p>Habilidades</p>
-        ${pokemon.abilities.map(a =>
-          `<span class="habilidad">${a.ability.name}</span>`
-        ).join("")}
-      </div>
-
-     <div class="stats">
-  ${pokemon.stats.map(s => `
-    <div class="stat">
-      <span class="stat-nombre">${s.stat.name}:</span>
-      <div class="barra">
-        <div class="barra-valor" style="width: ${s.base_stat / 1}%;"></div>
-      </div>
-    </div>
-  `).join("")}
-</div>
-<button class="btn-favoritos2">&#x2764;&#xFE0F;</button>
-    </div>
-
+// Modifica buscarPokemon con más logs
+async function buscarPokemon(valor) {
+    console.log("=== INICIO buscarPokemon() ===");
+    console.log("Valor buscado:", valor);
     
-  `;
+    // Debug: ver estado ANTES de cualquier operación
+    console.log("Estado INICIAL del localStorage:");
+    debugLocalStorage();
+    
+    // Inicializar cache y limpiar expirados
+    inicializarCache();
+    limpiarCacheExpirado();
+    
+    // Debug: ver estado después de inicializar
+    console.log("Estado DESPUÉS de inicializarCache():");
+    debugLocalStorage();
+    
+    // Intentar obtener del cache primero
+    const cachedPokemon = buscarEnCache(valor);
+    
+    if (cachedPokemon) {
+        console.log("✅ Mostrando Pokémon desde cache");
+        renderPokemon(cachedPokemon, true);
+        return;
+    }
+    
+    console.log("🌐 Buscando Pokémon desde API");
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${valor}`);
+    if (!response.ok) throw new Error("Pokémon no encontrado");
+
+    const data = await response.json();
+    
+    // Debug: ver estado antes de guardar
+    console.log("Estado ANTES de guardarEnCache():");
+    debugLocalStorage();
+    
+    // Guardar en cache antes de mostrar
+    guardarEnCache(valor, data);
+    guardarEnCache(data.id.toString(), data);
+    
+    // Debug: ver estado después de guardar
+    console.log("Estado DESPUÉS de guardarEnCache():");
+    debugLocalStorage();
+    
+    console.log("✅ Mostrando Pokémon desde API");
+    renderPokemon(data, false);
+    console.log("=== FIN buscarPokemon() ===");
+}
+
+function renderPokemon(pokemon, desdeCache = false) {
+    // Eliminamos la llamada a buscarEnCache() y usamos el parámetro
+    
+    resultado.innerHTML = `
+    <div class="card">
+        <!-- Título POKEMON DATA -->
+        <div class="pokemon-data-header">
+            <span class="pokemon-data-text">POKEMON DATA</span>
+            <!-- Mensaje de origen -->
+            <span class="origen-text ${desdeCache ? 'cache' : 'api'}">
+                ${desdeCache ? 'DESDE CACHÉ' : 'DESDE API'}
+            </span>
+        </div>
+        
+        <img src="${pokemon.sprites.front_default}">
+        <h2>#${pokemon.id} ${pokemon.name.toUpperCase()}</h2>
+        <div class="lineaCard"></div>
+        <p class="tiposPokemon">${pokemon.types.map(t => `<span class="tipo">${t.type.name}</span>`).join("")}</p>
+        
+        <div class="habilidadesPokemon">
+            <p>Habilidades</p>
+            ${pokemon.abilities.map(a =>
+                `<span class="habilidad">${a.ability.name}</span>`
+            ).join("")}
+        </div>
+
+        <div class="stats">
+            ${pokemon.stats.map(s => `
+            <div class="stat">
+                <span class="stat-nombre">${s.stat.name}:</span>
+                <div class="barra">
+                    <div class="barra-valor" style="width: ${s.base_stat / 1}%;"></div>
+                </div>
+            </div>
+            `).join("")}
+        </div>
+        <button class="btn-favoritos2" onclick="agregarAFavoritos('${pokemon.name}', ${pokemon.id})">&#x2764;&#xFE0F;</button>
+    </div>
+    `;
 }
 
 async function buscarHabilidad(valor) {
@@ -126,6 +264,27 @@ async function buscarHabilidad(valor) {
     </div>
   `;
 }
+
+// Función para agregar a favoritos
+function agregarAFavoritos(nombre, id) {
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    
+    // Verificar si ya está en favoritos
+    const yaEsFavorito = favoritos.some(fav => fav.id === id);
+    
+    if (!yaEsFavorito) {
+        favoritos.push({ nombre, id, fecha: new Date().toISOString() });
+        localStorage.setItem('pokemon_favoritos', JSON.stringify(favoritos));
+        alert(`¡${nombre.toUpperCase()} agregado a favoritos!`);
+    } else {
+        alert(`¡${nombre.toUpperCase()} ya está en favoritos!`);
+    }
+}
+
+// PASO 10: Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarCache();
+});
 
 </script>
 
@@ -264,6 +423,127 @@ img{
     font-size: 18px;
     cursor: pointer;
 }
+
+/* Estilos para el header de Pokémon Data */
+.pokemon-data-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.pokemon-data-text {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    font-size: 14px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    padding: 6px 12px;
+    background-color: #000000;
+    border: 2px solid #000000;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+    z-index: 11;
+}
+
+
+.origen-text {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    font-size: 12px;
+    padding: 6px 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+    z-index: 11;
+}
+
+/* Estilos específicos para cada tipo de origen */
+.origen-text.cache {
+    background-color: #4CAF50; /* Verde brillante */
+    color: white;
+    border: 2px solid #388E3C; /* Borde verde oscuro */
+}
+
+.origen-text.api {
+    background-color: #00BCD4; /* Cian/azul claro */
+    color: white;
+    border: 2px solid #0097A7; /* Borde azul más oscuro */
+}
+
+/* Opcional: agregar pequeños iconos */
+.origen-text.cache::before {
+    content: "📂 ";
+    font-size: 14px;
+}
+
+.origen-text.api::before {
+    content: "🌐 ";
+    font-size: 14px;
+}
+
+/* Efecto hover opcional */
+.origen-text.cache:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+}
+
+.origen-text.api:hover {
+    background-color: #00acc1;
+    transform: translateY(-1px);
+}
+
+#resultado {
+    position: relative;
+    z-index: 50;
+}
+/* Mejoras para la card */
+.card {
+    width: 420px;
+    margin-top: 750px; 
+   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid black;
+    background-color: #f9f9f9;
+    box-shadow: 8px 8px 0px #2d2d2d;
+    padding: 16px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* Mejorar el título del Pokémon */
+.card h2 {
+    width: 100%;
+    text-align: center;
+    margin: 15px 0 10px 0;
+    font-size: 24px;
+    color: black;
+    font-weight: bold;
+}
+
+/* Ajustar margen de la imagen */
+img {
+    width: 150px;
+    height: 150px;
+    margin-top: 20px; /* Más espacio después del header con colores */
+    border: 3px solid black;
+    background-image: repeating-linear-gradient(
+        45deg,
+        #ffffff 0px,
+        #ffffff 8px,
+        #e0e0e0 8px,
+        #e0e0e0 16px
+    );
+}
+
 </style>
 
 
