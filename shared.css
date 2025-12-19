@@ -29,21 +29,19 @@
 } 
 
 body {
-  display: flex;
+    display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .contenedor {
     width: 500px;
-    height: 500px;
     margin-top: 30px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    position: relative; 
+    position: relative;
 }
-
 .circulo{
     position: fixed;         
     top: 60px;               
@@ -235,3 +233,4 @@ body::before {
   background-color: var(--color-bg);
   z-index: -2;
 }
+
