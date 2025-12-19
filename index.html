@@ -148,6 +148,35 @@ async function buscar() {
   }
 }
 
+async function obtenerCadenaEvolutiva(pokemon) {
+    // 1. Ir a species
+    const responseSpecies = await fetch(pokemon.species.url);
+    const speciesData = await responseSpecies.json();
+
+    // 2. Ir a evolution chain
+    const responseEvo = await fetch(speciesData.evolution_chain.url);
+    const evoData = await responseEvo.json();
+
+    return extraerEvolucionesPorNivel(evoData.chain);
+}
+
+function extraerEvolucionesPorNivel(chain) {
+    const niveles = [];
+
+    function recorrer(nodo, nivel = 0) {
+        if (!niveles[nivel]) {
+            niveles[nivel] = [];
+        }
+
+        niveles[nivel].push(nodo.species.name);
+
+        nodo.evolves_to.forEach(evo => recorrer(evo, nivel + 1));
+    }
+
+    recorrer(chain);
+    return niveles;
+}
+
 // Agrega esta función de debug
 function debugLocalStorage() {
     console.log("=== DEBUG LOCALSTORAGE ===");
@@ -206,7 +235,8 @@ async function buscarPokemon(valor) {
     console.log("=== FIN buscarPokemon() ===");
 }
 
-function renderPokemon(pokemon, desdeCache = false) {
+async function renderPokemon(pokemon, desdeCache = false) {
+const evoluciones = await obtenerCadenaEvolutiva(pokemon);
     // Eliminamos la llamada a buscarEnCache() y usamos el parámetro
     
     resultado.innerHTML = `
@@ -243,6 +273,30 @@ function renderPokemon(pokemon, desdeCache = false) {
             `).join("")}
         </div>
         <button class="btn-favoritos2" onclick="agregarAFavoritos('${pokemon.name}', ${pokemon.id})">&#x2764;&#xFE0F;</button>
+        <div class="lineaFragmentada"></div>
+        <p class="evoluciones-Titulo">CADENA DE EVOLUCIÓN</p>
+         <div class="evoluciones">
+${evoluciones.map((nivel, index) => `
+    <div class="nivel-evo">
+
+        <div class="evo-grupo">
+            ${nivel.map(nombre => `
+                <button class="evo-btn" onclick="buscarPokemon('${nombre}')">
+                    <img class="imgEvo"
+                        src="https://img.pokemondb.net/sprites/home/normal/${nombre}.png"
+                        alt="${nombre}">
+                    <span>${nombre}</span>
+                </button>
+            `).join("")}
+        </div>
+
+        ${index < evoluciones.length - 1 ? `<div class="flecha">➜</div>` : ""}
+
+    </div>
+`).join("")}
+
+
+ 
     </div>
     `;
 }
@@ -308,9 +362,9 @@ function agregarAFavoritos(nombre, id) {
 </script>
 
 <style>
-.card{
+.card {
     width: 420px;
-    margin-top: 700px; 
+    height: auto;
     z-index: 10;
     display: flex;
     flex-direction: column;
@@ -319,11 +373,12 @@ function agregarAFavoritos(nombre, id) {
     background-color: #f9f9f9;
     box-shadow: 8px 8px 0px #2d2d2d;
     padding: 16px;
-    margin-bottom: 15px;
-
+    margin-bottom: 30px;
+    position: relative;
 }
 
-img{
+
+.card > img{
     width: 150px;
     height: 150px;
     margin-top: 10px;
@@ -418,6 +473,7 @@ img{
     height: 20px;
     border: 2px solid black;
     background-color: white;
+    overflow: hidden;
 }
 
 .barra-valor{
@@ -454,6 +510,78 @@ img{
     background-color: #ff5ca1; /* Rosa más intenso */
     transform: translateY(0) scale(0.95);
     box-shadow: 2px 2px 0px #2d2d2d;
+}
+
+.evoluciones-Titulo {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: 'Courier New', monospace;
+}
+
+.lineaFragmentada {
+    width: 95%;
+    border-top: 4px dashed black;
+    margin: 15px 0;
+}
+
+.evoluciones {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap; /* por si no cabe en pantallas pequeñas */
+}
+
+.nivel-evo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap; 
+    max-width: 100%;
+}
+
+/* EVOLUCIONES DEL MISMO NIVEL EN FILA */
+.evo-grupo {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;   
+    max-width: 100%;
+}
+
+/* BOTÓN */
+.evo-btn {
+   width: auto;
+   height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgb(163, 159, 159);
+    border: 2px solid black;
+    box-shadow: 4px 4px 0 #000;
+    padding: 6px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.imgEvo {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+}
+
+.flecha {
+    font-size: 16px;
+    color: red;
 }
 
 /* Estilos para el header de Pokémon Data */
@@ -531,26 +659,11 @@ img{
     transform: translateY(-1px);
 }
 
-#resultado {
-    position: relative;
-    z-index: 50;
-}
-/* Mejoras para la card */
-.card {
-    width: 420px;
-    margin-top: 750px; 
-   
+   #resultado {
+    margin-top: 300px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid black;
-    background-color: #f9f9f9;
-    box-shadow: 8px 8px 0px #2d2d2d;
-    padding: 16px;
-    margin-bottom: 15px;
-    position: relative;
+    justify-content: center;
 }
-
 /* Mejorar el título del Pokémon */
 .card h2 {
     width: 100%;
@@ -577,5 +690,3 @@ img {
 }
 
 </style>
-
-
