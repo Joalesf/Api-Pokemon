@@ -1,7 +1,7 @@
 (() => {
     const App = (() => {
 
-        // ================= CACHE =================
+        // CACHE 
         console.log("shared.js cargado");
 
         const CACHE_KEY = 'pokemon_cache';
@@ -90,7 +90,7 @@
             console.log("=== FIN DEBUG ===");
         }
 
-        // ================= EVOLUCIONES =================
+        // EVOLUCIONES 
 
         async function obtenerCadenaEvolutiva(pokemon) {
             console.log("🔗 Obteniendo cadena evolutiva de:", pokemon.name);
@@ -129,7 +129,7 @@
             return niveles;
         }
 
-        // 🔓 EXPONER funciones necesarias GLOBALMENTE
+        // Exponer funciones necesarias Globalmente
         return {
             init() {
                 inicializarCache();
