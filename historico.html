@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Finder - Histórico</title>
+
     <link rel="stylesheet" href="shared.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ===================== ESTILOS ===================== -->
     <style>
-        
-        #btn-buscar-hist{
+        /* ===== BOTONES SUPERIORES ===== */
+        #btn-buscar-hist {
             width: 120px;
             height: 50px;
             background-color: white;
@@ -21,21 +24,20 @@
             transition: transform 0.4s ease;
         }
 
-        #btn-historico-hist{
+        #btn-historico-hist {
             width: 150px;
             height: 50px;
-            background-color: var(--color-success); /* Verde agua - activo */
+            background-color: var(--color-success);
             border: solid 4px var(--border-color);
             box-shadow: var(--shadow);
             font-family: var(--font-family);
             font-size: 16px;
             font-weight: 900;
             letter-spacing: -1px;
-            transition: transform 0.3s ease;
             color: white;
         }
 
-        #btn-vs-hist{
+        #btn-vs-hist {
             width: 90px;
             height: 50px;
             background-color: white;
@@ -44,11 +46,9 @@
             font-family: var(--font-family);
             font-size: 16px;
             font-weight: 900;
-            letter-spacing: -1px;
-            transition: transform 0.4s ease;
         }
 
-        #btn-favoritos-hist{
+        #btn-favoritos-hist {
             width: 130px;
             height: 50px;
             background-color: white;
@@ -57,11 +57,8 @@
             font-family: var(--font-family);
             font-size: 16px;
             font-weight: 900;
-            letter-spacing: -1px;
-            transition: transform 0.3s ease;
         }
 
-        /* Efecto hover para todos los botones */
         #btn-buscar-hist:hover,
         #btn-historico-hist:hover,
         #btn-vs-hist:hover,
@@ -70,295 +67,134 @@
             transform: translateY(-4px) scale(1.02);
         }
 
-        /* ===== CONTENEDOR DE TARJETAS DE HISTÓRICO ===== */
-.contenedor-historico {
-    position: fixed; 
-    top: 230px; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-height: 300px; /* Altura máxima */
-    min-height: 100px;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 10px 20px;
-    align-items: center;
-    overflow-y: auto; /* Scroll vertical cuando hay muchos */
-    overflow-x: hidden; /* Evitar scroll horizontal */
-    border-radius: 10px;
-    padding-top: 10px;
-    padding-bottom: 20px;
-}
+        /* ===== CONTENEDOR HISTÓRICO ===== */
+        .contenedor-historico {
+            position: fixed;
+            top: 230px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            align-items: center;
+        }
 
-/* TARJETA INDIVIDUAL - Mismo estilo que botones pero más grande */
-.tarjeta-historico {
-    background-color: white;
-    border: solid 2px var(--border-color);
-    box-shadow: var(--shadow);
-    padding: 10px 20px;
-    width: 100%;
-    max-width: 450px; /* Ancho máximo para las tarjetas */
-    min-height: 80px;
-    position: relative;
-    transition: transform 0.3s ease;
-    font-family: var(--font-family);
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    gap: 12px;
-    align-items: center;
-}
+        /* ===== TARJETA ===== */
+        .tarjeta-historico {
+            background-color: white;
+            border: solid 2px var(--border-color);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            min-height: 80px;
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            gap: 12px;
+            padding: 10px 20px;
+            position: relative;
+            transition: transform 0.3s ease;
+            font-family: var(--font-family);
+        }
 
-/* Efecto hover igual que los botones */
-.tarjeta-historico:hover {
-    cursor: pointer;
-    transform: translateY(-4px) scale(1.02);
-}
+        .tarjeta-historico:hover {
+            cursor: pointer;
+            transform: translateY(-4px) scale(1.02);
+        }
 
-.columna-imagen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
+        .imagen-historico {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border: 3px solid black;
+            background-image: repeating-linear-gradient(
+                45deg,
+                #ffffff 0px,
+                #ffffff 8px,
+                #e0e0e0 8px,
+                #e0e0e0 16px
+            );
+            padding: 5px;
+        }
 
-.imagen-historico {
-    width: 80px;
-    height: 60px;
-    object-fit: contain;
-    border: 3px solid black;
-    background-image: repeating-linear-gradient(
-        45deg,
-        #FFFFFF 0px,
-        #ffffff 8px,
-        #e0e0e0 8px,
-        #e0e0e0 16px
-    );
-    padding: 5px;
-    box-sizing: border-box;
-}
+        .numero-historico {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin: 0;
+        }
 
-.columna-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    height: 100%;
-}
+        .nombre-historico {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin: 0;
+            text-transform: uppercase;
+        }
 
-.contenedor-nombre-id {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
+        .tipos-historico {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
 
-.numero-historico {
-    font-size: 15px;
-    color: var(--color-primary);
-    font-weight: 900;
-    letter-spacing: -1px;
-    margin: 0;
-}
+        .tipo-historico {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 4px 8px;
+            font-size: 8px;
+            font-weight: 900;
+            border: 2px solid var(--border-color);
+        }
 
+        /* ===== BOTONES TARJETA ===== */
+        .btn-eliminar-historico {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--color-error);
+            border: 2px solid var(--border-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
 
-/* NOMBRE (BULBASAUR, IVYSAUR) */
-.nombre-historico {
-    font-size: 15px;
-    color: var(--color-primary);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.5px;
-    margin: 0;
-    
-}
+        .btn-eliminar-historico::before {
+            content: "🗑️";
+        }
 
-.tipos-historico {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    min-width: 50px;
-    max-width: 70px;
-}
+        .btn-favorito-historico {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            width: 50px;
+            height: 50px;
+            background-color: pink;
+            border: 2px solid var(--border-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
 
-.tipo-historico {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 4px 8px;
-    font-size: 8px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 2px solid var(--border-color);
-    text-align: center;
-    width: 100%;
-    min-width: auto;
-}
+        .btn-favorito-historico::before {
+            content: "🤍";
+        }
 
+        .btn-favorito-historico.favorito-activo::before {
+            content: "❤️";
+        }
 
-/* Botón eliminar (🗑️ roja) */
-.btn-eliminar-historico {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: var(--color-error);
-    border: 2px solid var(--border-color);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s;
-    font-weight: 900;
-    border-radius: 4px;
-}
-
-.btn-eliminar-historico:hover {
-    background-color: #cc0000;
-    transform: scale(1.1);
-}
-
-.btn-eliminar-historico::before {
-    content: "🗑️";
-}
-
-/* Botón favoritos (❤️ rosa) */
-.btn-favorito-historico {
-    position: absolute;
-    top: 20px;
-    right: 80px; /* Posicionado a la izquierda del botón eliminar */
-    width: 50px;
-    height: 50px;
-    background-color: pink;
-    border: 2px solid var(--border-color);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s;
-    font-weight: 900;
-    border-radius: 4px;
-}
-
-.btn-favorito-historico:hover {
-    background-color: #ff7eb9;
-    transform: scale(1.1);
-}
-
-/* Estilo cuando ya está en favoritos */
-.btn-favorito-historico.favorito-activo {
-    background-color: #ff5ca1;
-}
-
-.btn-favorito-historico.favorito-activo::before {
-    content: "❤️";
-}
-
-.btn-favorito-historico:not(.favorito-activo)::before {
-    content: "🤍";
-}
-
-/* Mensaje cuando no hay histórico */
-.mensaje-sin-historico {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 100px 20px;
-    background-color: white;
-    border: 3px dashed #ccc;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.mensaje-sin-historico p {
-    font-size: 24px;
-    color: #666;
-    margin: 0 0 30px 0;
-    font-family: var(--font-family);
-    font-weight: 900;
-}
-
-.mensaje-sin-historico a {
-    color: var(--color-success);
-    text-decoration: none;
-    font-weight: 900;
-    display: inline-block;
-    margin-top: 20px;
-    padding: 15px 30px;
-    border: 3px solid var(--border-color);
-    background-color: white;
-    box-shadow: 4px 4px 0px #2d2d2d;
-    font-size: 18px;
-}
-
-.mensaje-sin-historico a:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 6px 6px 0px #2d2d2d;
-}
-
-/* ===== ESTILOS PARA ALERTAS PERSONALIZADAS ===== */
-.swal2-popup {
-    font-family: var(--font-family) !important;
-    border: solid 4px var(--border-color) !important;
-    box-shadow: var(--shadow) !important;
-    border-radius: 10px !important;
-}
-
-.swal2-title {
-    color: var(--color-primary) !important;
-    font-weight: 900 !important;
-    font-size: 22px !important;
-    text-transform: uppercase !important;
-    letter-spacing: -1px !important;
-}
-
-.swal2-html-container {
-    color: #333 !important;
-    font-size: 18px !important;
-    font-weight: 700 !important;
-}
-
-.swal2-confirm {
-    background-color: var(--color-error) !important;
-    border: solid 3px var(--border-color) !important;
-    color: white !important;
-    font-family: var(--font-family) !important;
-    font-weight: 900 !important;
-    font-size: 16px !important;
-    text-transform: uppercase !important;
-    letter-spacing: -0.5px !important;
-    padding: 12px 30px !important;
-    transition: all 0.3s ease !important;
-}
-
-.swal2-cancel {
-    background-color: var(--color-primary) !important;
-    border: solid 3px var(--border-color) !important;
-    color: white !important;
-    font-family: var(--font-family) !important;
-    font-weight: 900 !important;
-    font-size: 16px !important;
-    text-transform: uppercase !important;
-    letter-spacing: -0.5px !important;
-    padding: 12px 30px !important;
-    transition: all 0.3s ease !important;
-}
-
-.swal2-confirm:hover,
-.swal2-cancel:hover {
-    transform: translateY(-3px) scale(1.05) !important;
-}
-
-
+        /* ===== SIN HISTÓRICO ===== */
+        .mensaje-sin-historico {
+            text-align: center;
+            padding: 100px 20px;
+            background-color: white;
+            border: 3px dashed #ccc;
+            max-width: 800px;
+        }
     </style>
 </head>
 
@@ -370,398 +206,146 @@
     </div>
 
     <div class="botones">
-        <button id="btn-buscar-hist">&#x1F50E; BUSCAR</button>
-        <button id="btn-historico-hist">&#x1F4DC; HISTÓRICO</button>
-        <button id="btn-vs-hist">&#x2694; VS</button>
-        <button id="btn-favoritos-hist">&#x2764;&#xFE0F; FAVORITOS</button>
+        <button id="btn-buscar-hist">🔎 BUSCAR</button>
+        <button id="btn-historico-hist">📜 HISTÓRICO</button>
+        <button id="btn-vs-hist">⚔ VS</button>
+        <button id="btn-favoritos-hist">❤️ FAVORITOS</button>
     </div>
 
-   
-    <div id="contenedor-historico" class="contenedor-historico">
-        
-    </div>
-
-    <div class="circulo"> 
-        <div class="linea">
-            <div class="circulo1"></div>
-        </div>
-    </div>
-
+    <div id="contenedor-historico" class="contenedor-historico"></div>
 </div>
 
+<!-- ===================== SCRIPT ===================== -->
 <script>
-    
-    document.getElementById('btn-buscar-hist').addEventListener('click', function() {
-        window.location.href = 'index.html';
-    });
-
-   
-    document.getElementById('btn-historico-hist').addEventListener('click', function() {
-        // Ya estamos en histórico
-    });
-
-    document.getElementById('btn-vs-hist').addEventListener('click', function() {
-        // Función VS (si existe)
-    });
-
-    document.getElementById('btn-favoritos-hist').addEventListener('click', function() {
-        window.location.href = 'favoritos.html';
-    });
-
-    // ===== CONSTANTES (mismas que en index.html) =====
     const CACHE_KEY = 'pokemon_cache';
-    const CACHE_EXPIRY_HOURS = 24;
     const FAVORITOS_KEY = 'pokemon_favoritos';
 
-    // ===== FUNCIONES PARA CARGAR Y MOSTRAR HISTÓRICO =====
+    function obtenerCache() {
+        return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    }
 
     function limpiarCacheExpirado() {
         const cache = obtenerCache();
         const now = Date.now();
         let cambios = false;
-        
+
         for (const key in cache) {
-            if ((now - cache[key].timestamp) > cache[key].expiry) {
-                delete cache[key];
-                cambios = true;
+            const item = cache[key];
+            if (item.timestamp && item.expiry) {
+                if ((now - item.timestamp) > item.expiry) {
+                    delete cache[key];
+                    cambios = true;
+                }
             }
         }
-        
+
         if (cambios) {
             localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
         }
     }
 
-    function obtenerCache() {
-        const cacheData = localStorage.getItem(CACHE_KEY);
-        
-        if (!cacheData) {
-            return {};
-        }
-        
-        try {
-            return JSON.parse(cacheData);
-        } catch (e) {
-            console.error("❌ Error parseando cache:", e);
-            return {};
-        }
+    function estaEnFavoritos(id) {
+        const favs = JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
+        return favs.some(f => f.id === id);
     }
 
-    // Función para verificar si un Pokémon está en favoritos
-    function estaEnFavoritos(pokemonId) {
-        const favoritos = JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
-        return favoritos.some(fav => fav.id === pokemonId);
-    }
-
-    // Función para agregar o quitar de favoritos
-    function toggleFavorito(pokemonData) {
-        const favoritos = JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
-        const pokemonId = pokemonData.id;
-        const nombre = pokemonData.name;
-        
-        // Verificar si ya está en favoritos
-        const index = favoritos.findIndex(fav => fav.id === pokemonId);
-        
-        if (index === -1) {
-            // Agregar a favoritos
-            favoritos.push({ 
-                nombre: nombre, 
-                id: pokemonId, 
-                fecha: new Date().toISOString() 
-            });
-            localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favoritos));
-            
-            // Mostrar mensaje de éxito
-            Swal.fire({
-                title: '¡AGREGADO A FAVORITOS!',
-                html: `¡<strong>${nombre.toUpperCase()}</strong> agregado a favoritos!`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    popup: 'swal2-custom-popup'
-                },
-                buttonsStyling: false,
-                timer: 1500,
-                timerProgressBar: true
-            });
-            
-            return true; // Ahora está en favoritos
-        } else {
-            // Quitar de favoritos
-            favoritos.splice(index, 1);
-            localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favoritos));
-            
-            // Mostrar mensaje de eliminación
-            Swal.fire({
-                title: '¡ELIMINADO DE FAVORITOS!',
-                html: `¡<strong>${nombre.toUpperCase()}</strong> eliminado de favoritos!`,
-                icon: 'info',
-                confirmButtonText: 'OK',
-                customClass: {
-                    popup: 'swal2-custom-popup'
-                },
-                buttonsStyling: false,
-                timer: 1500,
-                timerProgressBar: true
-            });
-            
-            return false; // Ya no está en favoritos
-        }
-    }
-
-    async function cargarHistorico() {
-        console.log("Cargando histórico...");
-        
-        // 1. Limpiar cache expirado primero
+    function cargarHistorico() {
         limpiarCacheExpirado();
-        
-        // 2. Obtener histórico del localStorage (cache de búsquedas)
+
         const cache = obtenerCache();
-        console.log("Cache encontrado:", cache);
-        
-        // 3. Convertir objeto a array de Pokémon y eliminar duplicados
-        const pokemonsUnicos = new Map(); // Usar Map para evitar duplicados por ID
-        
+        const mapa = new Map();
+
         for (const key in cache) {
-            const cachedItem = cache[key];
-            if (cachedItem && cachedItem.data) {
-                const pokemonId = cachedItem.data.id;
-                
-                // Solo agregar si no existe ya en el mapa (evitar duplicados)
-                if (!pokemonsUnicos.has(pokemonId)) {
-                    pokemonsUnicos.set(pokemonId, {
-                        id: cachedItem.data.id,
-                        nombre: cachedItem.data.name,
-                        timestamp: cachedItem.timestamp,
-                        data: cachedItem.data
-                    });
-                }
+            const item = cache[key];
+            if (item?.data?.id && !mapa.has(item.data.id)) {
+                mapa.set(item.data.id, item.data);
             }
         }
-        
-        // Convertir Map a array
-        const pokemonsCache = Array.from(pokemonsUnicos.values());
-        
-        console.log("Pokémon únicos en cache:", pokemonsCache);
-        
-        // 4. Obtener contenedor
+
         const contenedor = document.getElementById('contenedor-historico');
-        
-        // 5. Limpiar contenedor completamente
         contenedor.innerHTML = '';
-        
-        // 6. Verificar si hay histórico
-        if (pokemonsCache.length === 0) {
+
+        if (mapa.size === 0) {
             contenedor.innerHTML = `
                 <div class="mensaje-sin-historico">
-                    <p>No hay Pokémon en el historial de búsquedas.</p>
-                    <p>¡Busca algunos Pokémon para que aparezcan aquí!</p>
-                    <a href="index.html">← VOLVER AL BUSCADOR</a>
-                </div>
-            `;
+                    <p>No hay Pokémon en el histórico.</p>
+                    <a href="index.html">← Volver al buscador</a>
+                </div>`;
             return;
         }
-        
-        // 7. Ordenar por fecha de búsqueda (más recientes primero)
-        pokemonsCache.sort((a, b) => b.timestamp - a.timestamp);
-        
-        // 8. Cargar cada Pokémon del cache
-        for (const pokemonItem of pokemonsCache) {
-            console.log("Procesando Pokémon del cache:", pokemonItem.nombre);
-            await crearTarjetaHistorico(pokemonItem.data, contenedor);
-        }
-    }
 
-    // Función para crear una tarjeta del histórico
-    async function crearTarjetaHistorico(pokemonData, contenedor) {
-        try {
-            const imagenUrl = pokemonData.sprites.front_default || pokemonData.sprites.other['official-artwork'].front_default;
-            
-            // Verificar si está en favoritos
-            const enFavoritos = estaEnFavoritos(pokemonData.id);
-            
-            const tarjeta = document.createElement('div');
-            tarjeta.className = 'tarjeta-historico';
-            tarjeta.innerHTML = `
-                <button class="btn-eliminar-historico" 
-                        onclick="eliminarDelHistorico(${pokemonData.id}, '${pokemonData.name}')" 
-                        title="Eliminar del histórico"></button>
-                
-                <button class="btn-favorito-historico ${enFavoritos ? 'favorito-activo' : ''}" 
-                        onclick="toggleFavoritoDesdeHistorico(this, ${pokemonData.id}, '${pokemonData.name}')" 
-                        title="${enFavoritos ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
-                </button>
-                
-                <div class="columna-imagen">
-                    <img src="${imagenUrl}" alt="${pokemonData.name}" class="imagen-historico">
-                </div>
-                
-                <div class="columna-info">
-                    <div class="contenedor-nombre-id">
-                        <p class="numero-historico">#${pokemonData.id}</p>
-                        <p class="nombre-historico">${pokemonData.name.toUpperCase()}</p>
-                    </div>
+        [...mapa.values()].forEach(pokemon => {
+            const card = document.createElement('div');
+            card.className = 'tarjeta-historico';
+
+            card.innerHTML = `
+                <button class="btn-eliminar-historico"
+                    onclick="eliminarDelHistorico(${pokemon.id}, '${pokemon.name}')"></button>
+
+                <button class="btn-favorito-historico ${estaEnFavoritos(pokemon.id) ? 'favorito-activo' : ''}"
+                    onclick="toggleFavorito(${pokemon.id}, '${pokemon.name}', this)"></button>
+
+                <img src="${pokemon.sprites.front_default}" class="imagen-historico">
+
+                <div>
+                    <p class="numero-historico">#${pokemon.id}</p>
+                    <p class="nombre-historico">${pokemon.name}</p>
                     <div class="tipos-historico">
-                        ${pokemonData.types.map(t => 
-                            `<span class="tipo-historico">${t.type.name.toUpperCase()}</span>`
-                        ).join('')}
+                        ${pokemon.types.map(t => `<span class="tipo-historico">${t.type.name}</span>`).join('')}
                     </div>
                 </div>
             `;
-            
-            // Hacer clicable la tarjeta para buscar ese Pokémon
-            tarjeta.addEventListener('click', function(e) {
-                // Evitar que se active si se hizo clic en los botones
-                if (!e.target.closest('.btn-eliminar-historico') && 
-                    !e.target.closest('.btn-favorito-historico')) {
-                    window.location.href = `index.html?search=${pokemonData.name}`;
+
+            card.addEventListener('click', e => {
+                if (!e.target.closest('button')) {
+                    window.location.href = `index.html?search=${pokemon.name}`;
                 }
             });
-            
-            contenedor.appendChild(tarjeta);
-            
-        } catch (error) {
-            console.error(`Error creando tarjeta para ${pokemonData.name}:`, error);
-            crearTarjetaErrorHistorico(pokemonData, contenedor);
-        }
-    }
 
-    // Función para toggle favorito desde histórico (maneja el estado visual)
-    function toggleFavoritoDesdeHistorico(boton, pokemonId, nombre) {
-        // Obtener datos del Pokémon del cache
-        const cache = obtenerCache();
-        let pokemonData = null;
-        
-        // Buscar el Pokémon en el cache
-        for (const key in cache) {
-            const cachedItem = cache[key];
-            if (cachedItem && cachedItem.data && cachedItem.data.id === pokemonId) {
-                pokemonData = cachedItem.data;
-                break;
-            }
-        }
-        
-        if (pokemonData) {
-            // Llamar a la función toggleFavorito
-            const ahoraEnFavoritos = toggleFavorito(pokemonData);
-            
-            // Actualizar el botón visualmente
-            if (ahoraEnFavoritos) {
-                boton.classList.add('favorito-activo');
-                boton.title = 'Quitar de favoritos';
-            } else {
-                boton.classList.remove('favorito-activo');
-                boton.title = 'Agregar a favoritos';
-            }
-        }
-    }
-
-    // Función para crear tarjeta de error
-    function crearTarjetaErrorHistorico(pokemonData, contenedor) {
-        const enFavoritos = estaEnFavoritos(pokemonData.id);
-        
-        const tarjetaError = document.createElement('div');
-        tarjetaError.className = 'tarjeta-historico';
-        tarjetaError.innerHTML = `
-            <button class="btn-eliminar-historico" onclick="eliminarDelHistorico(${pokemonData.id}, '${pokemonData.name}')">🗑️</button>
-            
-            <button class="btn-favorito-historico ${enFavoritos ? 'favorito-activo' : ''}" 
-                    onclick="toggleFavoritoDesdeHistorico(this, ${pokemonData.id}, '${pokemonData.name}')">
-            </button>
-            
-            <div class="columna-imagen">
-                <div class="imagen-historico" style="background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 10px; color: #999;">Sin imagen</span>
-                </div>
-            </div>
-            
-            <div class="columna-info">
-                <div class="contenedor-nombre-id">
-                    <p class="numero-historico">#${pokemonData.id}</p>
-                    <p class="nombre-historico">${pokemonData.name.toUpperCase()}</p>
-                </div>
-                <div class="tipos-historico">
-                    <span class="tipo-historico">ERROR</span>
-                </div>
-            </div>
-        `;
-        contenedor.appendChild(tarjetaError);
-    }
-
-    // Función para eliminar un Pokémon del histórico
-    async function eliminarDelHistorico(id, nombre) {
-        const resultado = await Swal.fire({
-            title: 'ELIMINAR DEL HISTÓRICO',
-            html: `¿Estás seguro de eliminar a <strong>${nombre.toUpperCase()}</strong> del histórico?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'SÍ, ELIMINAR',
-            cancelButtonText: 'CANCELAR',
-            customClass: {
-                popup: 'swal2-custom-popup'
-            },
-            buttonsStyling: false,
-            reverseButtons: true
+            contenedor.appendChild(card);
         });
-        
-        if (resultado.isConfirmed) {
-            // 1. Obtener cache actual
-            const cache = obtenerCache();
-            
-            // 2. Buscar y eliminar todas las claves relacionadas con este Pokémon
-            let eliminados = 0;
-            for (const key in cache) {
-                const cachedItem = cache[key];
-                if (cachedItem && cachedItem.data && 
-                    (cachedItem.data.id === id || cachedItem.data.name === nombre.toLowerCase())) {
-                    delete cache[key];
-                    eliminados++;
-                }
-            }
-            
-            // 3. Guardar en localStorage
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-            
-            // 4. Recargar la lista
-            cargarHistorico();
-            
-            // 5. Mostrar mensaje de éxito
-            Swal.fire({
-                title: '¡ELIMINADO!',
-                html: `¡<strong>${nombre.toUpperCase()}</strong> eliminado del histórico!`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    popup: 'swal2-custom-popup'
-                },
-                buttonsStyling: false,
-                timer: 1500,
-                timerProgressBar: true
-            });
+    }
+
+    function toggleFavorito(id, name, btn) {
+        let favs = JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
+        const index = favs.findIndex(f => f.id === id);
+
+        if (index === -1) {
+            favs.push({ id, name });
+            btn.classList.add('favorito-activo');
+        } else {
+            favs.splice(index, 1);
+            btn.classList.remove('favorito-activo');
         }
+
+        localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favs));
     }
 
-    // ===== CONFIGURAR EVENT LISTENERS =====
-
-    // 1. Cuando se carga la página, cargar histórico
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("Página de histórico cargada");
-        cargarHistorico();
-    });
-
-    // 2. Función de debug para verificar
-    function verificarHistorico() {
-        const cache = obtenerCache();
-        const cantidad = Object.keys(cache).length;
-        console.log('=== VERIFICACIÓN DE HISTÓRICO ===');
-        console.log('Total de entradas en cache:', cantidad);
-        console.log('Cache completo:', cache);
-        console.log('=== FIN VERIFICACIÓN ===');
+    function eliminarDelHistorico(id, name) {
+        Swal.fire({
+            title: 'Eliminar del histórico',
+            text: `¿Eliminar ${name.toUpperCase()}?`,
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'Cancelar'
+        }).then(res => {
+            if (res.isConfirmed) {
+                const cache = obtenerCache();
+                for (const key in cache) {
+                    if (cache[key]?.data?.id === id) {
+                        delete cache[key];
+                    }
+                }
+                localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+                cargarHistorico();
+            }
+        });
     }
 
-    // Llama a esta función para verificar
-    verificarHistorico();
+    document.getElementById('btn-buscar-hist').onclick = () => location.href = 'index.html';
+    document.getElementById('btn-favoritos-hist').onclick = () => location.href = 'favoritos.html';
 
+    document.addEventListener('DOMContentLoaded', cargarHistorico);
 </script>
 </body>
 </html>
