@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pokémon Finder - VS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+#btn-buscar-vs,#btn-historico-vs,#btn-vs-vs,#btn-favoritos-vs{
+    width:130px;height:50px;
+    background:white;
+    border:4px solid var(--border-color);
+    box-shadow:var(--shadow);
+    font-family:var(--font-family);
+    font-weight:900;
+}
+#btn-vs-vs{background:var(--color-success);color:white;}
+#btn-buscar-vs:hover,#btn-historico-vs:hover,
+#btn-vs-vs:hover,#btn-favoritos-vs:hover{
+    transform:translateY(-4px) scale(1.02);cursor:pointer;
+}
+
+.vs-bar{
+    position:fixed;top:230px;left:50%;
+    transform:translateX(-50%);
+    display:grid;
+    grid-template-columns:1fr 80px 1fr;
+    gap:10px;
+    width:100%;max-width:700px;
+}
+.vs-input{
+    height:44px;
+    border:4px solid var(--border-color);
+    font-family:var(--font-family);
+    font-weight:900;
+    padding:0 10px;
+}
+.vs-btn{
+    height:44px;
+    background:var(--color-error);
+    color:white;
+    border:4px solid var(--border-color);
+    font-weight:900;
+}
+
+#btn-batallar{
+    position:fixed;
+    top:290px;left:50%;
+    transform:translateX(-50%);
+    width:300px;height:60px;
+    background:var(--color-error);
+    color:white;
+    border:4px solid var(--border-color);
+    font-weight:900;
+    font-size:20px;
+}
+#btn-batallar:disabled{opacity:.5}
+
+.vs-cards{
+    position:fixed;
+    top:370px;left:50%;
+    transform:translateX(-50%);
+    display:grid;
+    grid-template-columns:1fr 60px 1fr;
+    gap:10px;
+    width:100%;max-width:700px;
+}
+.vs-center{
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;font-weight:900;
+}
+.poke-card{
+    background:white;
+    border:4px solid var(--border-color);
+    box-shadow:var(--shadow);
+    padding:10px;
+    text-align:center;
+    font-family:var(--font-family);
+}
+.placeholder{
+    background:#e0e0e0;
+    font-size:60px;
+    font-weight:900;
+}
+
+.swal2-popup{
+    font-family:var(--font-family)!important;
+    border:4px solid var(--border-color)!important;
+}
+</style>
+</head>
+
+<body>
+<div class="contenedor">
+
+<div class="titulo">
+    <h1>⚔️ POKÉMON VS ⚔️</h1>
+</div>
+
+<div class="botones">
+    <button id="btn-buscar-vs">🔍 BUSCAR</button>
+    <button id="btn-historico-vs">📜 HISTÓRICO</button>
+    <button id="btn-vs-vs">⚔ VS</button>
+    <button id="btn-favoritos-vs">❤️ FAVORITOS</button>
+</div>
+
+
+<div class="vs-bar">
+    <div>
+        <input id="input-p1" class="vs-input" placeholder="POKÉMON 1">
+        <button id="buscar-p1" class="vs-btn">BUSCAR</button>
+    </div>
+
+    <div class="vs-center">VS</div>
+
+    <div>
+        <input id="input-p2" class="vs-input" placeholder="POKÉMON 2">
+        <button id="buscar-p2" class="vs-btn">BUSCAR</button>
+    </div>
+</div>
+
+<button id="btn-batallar" disabled>⚔ ¡BATALLAR!</button>
+
+
+<div class="vs-cards">
+    <div id="card1" class="poke-card placeholder">?</div>
+    <div class="vs-center">⚔</div>
+    <div id="card2" class="poke-card placeholder">?</div>
+</div>
+
+<div class="circulo"><div class="linea"><div class="circulo1"></div></div></div>
+</div>
+
+<script>
+
+btn('btn-buscar-vs','index.html');
+btn('btn-historico-vs','historico.html');
+btn('btn-favoritos-vs','favoritos.html');
+
+function btn(id,link){
+    document.getElementById(id).onclick=()=>location.href=link;
+}
+
+
+let p1=null,p2=null;
+
+
+async function buscarPokemon(q){
+    const r=await fetch(`https://pokeapi.co/api/v2/pokemon/${q}`);
+    if(!r.ok) return null;
+    return await r.json();
+}
+
+
+function render(card,p){
+    card.className='poke-card';
+    card.innerHTML=`
+        <h3>#${p.id} ${p.name.toUpperCase()}</h3>
+        <img src="${p.sprites.front_default}" width="96">
+    `;
+}
+
+
+document.getElementById('buscar-p1').onclick=async()=>{
+    const q=input('input-p1');
+    const p=await buscarPokemon(q);
+    if(!p) return alertError();
+    p1=p; render(card1,p1); check();
+};
+
+document.getElementById('buscar-p2').onclick=async()=>{
+    const q=input('input-p2');
+    const p=await buscarPokemon(q);
+    if(!p) return alertError();
+    p2=p; render(card2,p2); check();
+};
+
+function check(){
+    document.getElementById('btn-batallar').disabled=!(p1&&p2);
+}
+
+function input(id){return document.getElementById(id).value.trim().toLowerCase();}
+function alertError(){
+    Swal.fire('Error','Pokémon no encontrado','error');
+}
+
+document.getElementById('btn-batallar').onclick=()=>{
+    Swal.fire('VS LISTO','La batalla se implementa en el próximo commit','success');
+};
+</script>
+</body>
+</html>
