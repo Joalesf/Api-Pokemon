@@ -19,7 +19,7 @@
 ✔ Comparar dos Pokémon en un modo **VS** con cálculo de puntajes  
 ✔ Analizar ventajas de tipos y estadísticas en la batalla
 
-Esta app está implementada utilizando **HTML, CSS y JavaScript puro**, sin frameworks, y consume datos directamente desde la [PokéAPI](https://pokeapi.co/) :contentReference[oaicite:0]{index=0}
+Esta app está implementada utilizando **HTML, CSS y JavaScript puro**, sin frameworks, y consume datos directamente desde la [PokéAPI]
 
 ---
 
