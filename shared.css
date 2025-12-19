@@ -4,7 +4,7 @@
 
 :root {
     /* Colores principales */
-    --color-bg: #f5e6d3;           /* Fondo beige */
+    --color-bg: white;           /* Fondo beige */
     --color-primary: #2d2d2d;       /* Negro/Gris oscuro */
     --color-accent: #ffcc00;        /* Amarillo Pokémon */
     --color-secondary: #ff6b6be2;     /* Rojo coral */
