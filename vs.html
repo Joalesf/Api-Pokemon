@@ -354,8 +354,13 @@
     }
 
 .panel-result{
+<<<<<<< HEAD
   position: relative;   
   top: 170px;
+=======
+  position: absolute;   
+  top: 690px;
+>>>>>>> f0f74bed0c520890e267d074e2f196921e2fbbbe
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -363,6 +368,9 @@
   z-index: 10;
   padding: 12px 14px;
   display: none;
+}
+.contenedor{
+  position: relative;
 }
 
 
@@ -719,7 +727,7 @@
   document.getElementById('btn-buscar-vs').addEventListener('click', () => window.location.href = 'index.html');
   document.getElementById('btn-historico-vs').addEventListener('click', () => window.location.href = 'historico.html');
   document.getElementById('btn-favoritos-vs').addEventListener('click', () => window.location.href = 'favoritos.html');
-  document.getElementById('btn-vs-vs').addEventListener('click', () => window.location.href = 'vs.html');
+  document.getElementById('btn-vs').addEventListener('click', () => window.location.href = 'vs.html');
 
   function obtenerCache() {
     const raw = localStorage.getItem(CACHE_KEY);
