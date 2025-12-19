@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Finder - Histórico</title>
+    <link rel="stylesheet" href="shared.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        
+        #btn-buscar-hist{
+            width: 120px;
+            height: 50px;
+            background-color: white;
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.4s ease;
+        }
+
+        #btn-historico-hist{
+            width: 150px;
+            height: 50px;
+            background-color: var(--color-success); /* Verde agua - activo */
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.3s ease;
+            color: white;
+        }
+
+        #btn-vs-hist{
+            width: 90px;
+            height: 50px;
+            background-color: white;
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.4s ease;
+        }
+
+        #btn-favoritos-hist{
+            width: 130px;
+            height: 50px;
+            background-color: white;
+            border: solid 4px var(--border-color);
+            box-shadow: var(--shadow);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Efecto hover para todos los botones */
+        #btn-buscar-hist:hover,
+        #btn-historico-hist:hover,
+        #btn-vs-hist:hover,
+        #btn-favoritos-hist:hover {
+            cursor: pointer;
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* ===== CONTENEDOR DE TARJETAS DE HISTÓRICO ===== */
+.contenedor-historico {
+    position: fixed; 
+    top: 230px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-height: 300px; /* Altura máxima */
+    min-height: 100px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 20px;
+    align-items: center;
+    overflow-y: auto; /* Scroll vertical cuando hay muchos */
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+/* TARJETA INDIVIDUAL - Mismo estilo que botones pero más grande */
+.tarjeta-historico {
+    background-color: white;
+    border: solid 2px var(--border-color);
+    box-shadow: var(--shadow);
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 450px; /* Ancho máximo para las tarjetas */
+    min-height: 80px;
+    position: relative;
+    transition: transform 0.3s ease;
+    font-family: var(--font-family);
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Efecto hover igual que los botones */
+.tarjeta-historico:hover {
+    cursor: pointer;
+    transform: translateY(-4px) scale(1.02);
+}
+
+.columna-imagen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.imagen-historico {
+    width: 80px;
+    height: 60px;
+    object-fit: contain;
+    border: 3px solid black;
+    background-image: repeating-linear-gradient(
+        45deg,
+        #FFFFFF 0px,
+        #ffffff 8px,
+        #e0e0e0 8px,
+        #e0e0e0 16px
+    );
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.columna-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    height: 100%;
+}
+
+.contenedor-nombre-id {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.numero-historico {
+    font-size: 15px;
+    color: var(--color-primary);
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+
+/* NOMBRE (BULBASAUR, IVYSAUR) */
+.nombre-historico {
+    font-size: 15px;
+    color: var(--color-primary);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin: 0;
+    
+}
+
+.tipos-historico {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    min-width: 50px;
+    max-width: 70px;
+}
+
+.tipo-historico {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 4px 8px;
+    font-size: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid var(--border-color);
+    text-align: center;
+    width: 100%;
+    min-width: auto;
+}
+
+
+/* Botón eliminar (X roja) */
+.btn-eliminar-historico {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-error);
+    border: 2px solid var(--border-color);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    font-weight: 900;
+    border-radius: 4px;
+}
+
+.btn-eliminar-historico:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
+}
+
+.btn-eliminar-historico::before {
+    content: "🗑️";
+}
+
+/* Botón LIMPIAR TODO - FUERA del contenedor con scroll */
+.btn-limpiar-todo-hist {
+    position: fixed;
+    top: 520px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 60px;
+    background-color: var(--color-error); /* ROJO */
+    border: solid 4px var(--border-color);
+    box-shadow: var(--shadow);
+    color: white;
+    font-family: var(--font-family);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+    z-index: 11;
+    display: block;
+}
+
+.btn-limpiar-todo-hist:hover {
+    transform: translateY(-4px) scale(1.02) translateX(-50%); 
+}
+
+
+.btn-limpiar-todo-hist {
+    margin: 0; 
+}
+
+
+/* Mensaje cuando no hay histórico */
+.mensaje-sin-historico {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    background-color: white;
+    border: 3px dashed #ccc;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mensaje-sin-historico p {
+    font-size: 24px;
+    color: #666;
+    margin: 0 0 30px 0;
+    font-family: var(--font-family);
+    font-weight: 900;
+}
+
+.mensaje-sin-historico a {
+    color: var(--color-success);
+    text-decoration: none;
+    font-weight: 900;
+    display: inline-block;
+    margin-top: 20px;
+    padding: 15px 30px;
+    border: 3px solid var(--border-color);
+    background-color: white;
+    box-shadow: 4px 4px 0px #2d2d2d;
+    font-size: 18px;
+}
+
+.mensaje-sin-historico a:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 6px 6px 0px #2d2d2d;
+}
+
+/* ===== ESTILOS PARA ALERTAS PERSONALIZADAS ===== */
+.swal2-popup {
+    font-family: var(--font-family) !important;
+    border: solid 4px var(--border-color) !important;
+    box-shadow: var(--shadow) !important;
+    border-radius: 10px !important;
+}
+
+.swal2-title {
+    color: var(--color-primary) !important;
+    font-weight: 900 !important;
+    font-size: 22px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -1px !important;
+}
+
+.swal2-html-container {
+    color: #333 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+.swal2-confirm {
+    background-color: var(--color-error) !important;
+    border: solid 3px var(--border-color) !important;
+    color: white !important;
+    font-family: var(--font-family) !important;
+    font-weight: 900 !important;
+    font-size: 16px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.5px !important;
+    padding: 12px 30px !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-cancel {
+    background-color: var(--color-primary) !important;
+    border: solid 3px var(--border-color) !important;
+    color: white !important;
+    font-family: var(--font-family) !important;
+    font-weight: 900 !important;
+    font-size: 16px !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.5px !important;
+    padding: 12px 30px !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover,
+.swal2-cancel:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+}
+
+
+    </style>
+</head>
+
+<body>
+<div class="contenedor">
+
+    <div class="titulo">
+        <h1>📜 HISTÓRICO</h1>
+    </div>
+
+    <div class="botones">
+        <button id="btn-buscar-hist">&#x1F50E; BUSCAR</button>
+        <button id="btn-historico-hist">&#x1F4DC; HISTÓRICO</button>
+        <button id="btn-vs-hist">&#x2694; VS</button>
+        <button id="btn-favoritos-hist">&#x2764;&#xFE0F; FAVORITOS</button>
+    </div>
+
+   
+    <div id="contenedor-historico" class="contenedor-historico">
+        
+    </div>
+
+    <button id="btn-limpiar-todo-hist" class="btn-limpiar-todo-hist">
+        🗑️ LIMPIAR HISTÓRICO
+    </button>
+
+
+
+    <div class="circulo"> 
+        <div class="linea">
+            <div class="circulo1"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    
+    document.getElementById('btn-buscar-hist').addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
+
+   
+    document.getElementById('btn-historico-hist').addEventListener('click', function() {
+        // Ya estamos en histórico
+    });
+
+    document.getElementById('btn-vs-hist').addEventListener('click', function() {
+        // Función VS (si existe)
+    });
+
+    document.getElementById('btn-favoritos-hist').addEventListener('click', function() {
+        window.location.href = 'favoritos.html';
+    });
+
+    // ===== CONSTANTES (mismas que en index.html) =====
+    const CACHE_KEY = 'pokemon_cache';
+    const CACHE_EXPIRY_HOURS = 24;
+
+    // ===== FUNCIONES PARA CARGAR Y MOSTRAR HISTÓRICO =====
+
+    function limpiarCacheExpirado() {
+        const cache = obtenerCache();
+        const now = Date.now();
+        let cambios = false;
+        
+        for (const key in cache) {
+            if ((now - cache[key].timestamp) > cache[key].expiry) {
+                delete cache[key];
+                cambios = true;
+            }
+        }
+        
+        if (cambios) {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+        }
+    }
+
+    function obtenerCache() {
+        const cacheData = localStorage.getItem(CACHE_KEY);
+        
+        if (!cacheData) {
+            return {};
+        }
+        
+        try {
+            return JSON.parse(cacheData);
+        } catch (e) {
+            console.error("❌ Error parseando cache:", e);
+            return {};
+        }
+    }
+
+    async function cargarHistorico() {
+        console.log("Cargando histórico...");
+        
+        // 1. Limpiar cache expirado primero
+        limpiarCacheExpirado();
+        
+        // 2. Obtener histórico del localStorage (cache de búsquedas)
+        const cache = obtenerCache();
+        console.log("Cache encontrado:", cache);
+        
+        // 3. Convertir objeto a array de Pokémon
+        const pokemonsCache = [];
+        for (const key in cache) {
+            const cachedItem = cache[key];
+            if (cachedItem && cachedItem.data) {
+                pokemonsCache.push({
+                    id: cachedItem.data.id,
+                    nombre: cachedItem.data.name,
+                    timestamp: cachedItem.timestamp,
+                    data: cachedItem.data
+                });
+            }
+        }
+        
+        console.log("Pokémon en cache:", pokemonsCache);
+        
+        // 4. Obtener contenedor
+        const contenedor = document.getElementById('contenedor-historico');
+        
+        // 5. Limpiar contenedor completamente
+        contenedor.innerHTML = '';
+        
+        // 6. Verificar si hay histórico
+        if (pokemonsCache.length === 0) {
+            contenedor.innerHTML = `
+                <div class="mensaje-sin-historico">
+                    <p>No hay Pokémon en el historial de búsquedas.</p>
+                    <p>¡Busca algunos Pokémon para que aparezcan aquí!</p>
+                    <a href="index.html">← VOLVER AL BUSCADOR</a>
+                </div>
+            `;
+            
+            // Ocultar botón "Limpiar histórico" si no hay histórico
+            document.getElementById('btn-limpiar-todo-hist').style.display = 'none';
+            return;
+        }
+        
+        // 7. MOSTRAR botón "Limpiar histórico" si hay histórico
+        document.getElementById('btn-limpiar-todo-hist').style.display = 'block';
+        
+        // 8. Ordenar por fecha de búsqueda (más recientes primero)
+        pokemonsCache.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // 9. Cargar cada Pokémon del cache
+        for (const pokemonItem of pokemonsCache) {
+            console.log("Procesando Pokémon del cache:", pokemonItem.nombre);
+            await crearTarjetaHistorico(pokemonItem.data, contenedor, pokemonItem.timestamp);
+        }
+    }
+
+    // Función para crear una tarjeta del histórico
+    async function crearTarjetaHistorico(pokemonData, contenedor, timestamp) {
+        try {
+            const imagenUrl = pokemonData.sprites.front_default || pokemonData.sprites.other['official-artwork'].front_default;
+            const fecha = new Date(timestamp);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-historico';
+            tarjeta.innerHTML = `
+                <button class="btn-eliminar-historico" onclick="eliminarDelHistorico(${pokemonData.id}, '${pokemonData.name}')" 
+                        title="Eliminar del histórico"></button>
+                
+                <div class="columna-imagen">
+                    <img src="${imagenUrl}" alt="${pokemonData.name}" class="imagen-historico">
+                </div>
+                
+                <div class="columna-info">
+                    <div class="contenedor-nombre-id">
+                        <p class="numero-historico">#${pokemonData.id}</p>
+                        <p class="nombre-historico">${pokemonData.name.toUpperCase()}</p>
+                    </div>
+                    <div class="tipos-historico">
+                        ${pokemonData.types.map(t => 
+                            `<span class="tipo-historico">${t.type.name.toUpperCase()}</span>`
+                        ).join('')}
+                    </div>
+                    <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                        Buscado: ${fechaFormateada}
+                    </div>
+                </div>
+            `;
+            
+            // Hacer clicable la tarjeta para buscar ese Pokémon
+            tarjeta.addEventListener('click', function(e) {
+                // Evitar que se active si se hizo clic en el botón de eliminar
+                if (!e.target.closest('.btn-eliminar-historico')) {
+                    window.location.href = `index.html?search=${pokemonData.name}`;
+                }
+            });
+            
+            contenedor.appendChild(tarjeta);
+            
+        } catch (error) {
+            console.error(`Error creando tarjeta para ${pokemonData.name}:`, error);
+            crearTarjetaErrorHistorico(pokemonData, contenedor);
+        }
+    }
+
+    // Función para crear tarjeta de error
+    function crearTarjetaErrorHistorico(pokemonData, contenedor) {
+        const tarjetaError = document.createElement('div');
+        tarjetaError.className = 'tarjeta-historico';
+        tarjetaError.innerHTML = `
+            <button class="btn-eliminar-historico" onclick="eliminarDelHistorico(${pokemonData.id}, '${pokemonData.name}')">🗑️</button>
+            
+            <div class="columna-imagen">
+                <div class="imagen-historico" style="background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 10px; color: #999;">Sin imagen</span>
+                </div>
+            </div>
+            
+            <div class="columna-info">
+                <div class="contenedor-nombre-id">
+                    <p class="numero-historico">#${pokemonData.id}</p>
+                    <p class="nombre-historico">${pokemonData.name.toUpperCase()}</p>
+                </div>
+                <div class="tipos-historico">
+                    <span class="tipo-historico">ERROR</span>
+                </div>
+            </div>
+        `;
+        contenedor.appendChild(tarjetaError);
+    }
+
+    // Función para eliminar un Pokémon del histórico
+    async function eliminarDelHistorico(id, nombre) {
+        const resultado = await Swal.fire({
+            title: 'ELIMINAR DEL HISTÓRICO',
+            html: `¿Estás seguro de eliminar a <strong>${nombre.toUpperCase()}</strong> del histórico?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'SÍ, ELIMINAR',
+            cancelButtonText: 'CANCELAR',
+            customClass: {
+                popup: 'swal2-custom-popup'
+            },
+            buttonsStyling: false,
+            reverseButtons: true
+        });
+        
+        if (resultado.isConfirmed) {
+            // 1. Obtener cache actual
+            const cache = obtenerCache();
+            
+            // 2. Buscar y eliminar todas las claves relacionadas con este Pokémon
+            let eliminados = 0;
+            for (const key in cache) {
+                const cachedItem = cache[key];
+                if (cachedItem && cachedItem.data && 
+                    (cachedItem.data.id === id || cachedItem.data.name === nombre.toLowerCase())) {
+                    delete cache[key];
+                    eliminados++;
+                }
+            }
+            
+            // 3. Guardar en localStorage
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+            
+            // 4. Recargar la lista
+            cargarHistorico();
+            
+            // 5. Mostrar mensaje de éxito
+            Swal.fire({
+                title: '¡ELIMINADO!',
+                html: `¡<strong>${nombre.toUpperCase()}</strong> eliminado del histórico!`,
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-custom-popup'
+                },
+                buttonsStyling: false
+            });
+        }
+    }
+
+    async function limpiarTodoHistorico() {
+        const cache = obtenerCache();
+        const cantidad = Object.keys(cache).length;
+        
+        if (cantidad === 0) {
+            Swal.fire({
+                title: 'SIN HISTÓRICO',
+                text: 'No hay Pokémon en el historial',
+                icon: 'info',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-custom-popup'
+                },
+                buttonsStyling: false
+            });
+            return;
+        }
+        
+        const resultado = await Swal.fire({
+            title: 'ELIMINAR TODO EL HISTÓRICO',
+            html: `¿Estás seguro de eliminar <strong>TODO</strong> el historial de búsquedas?<br>(${cantidad} Pokémon en cache)`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'SÍ, ELIMINAR TODO',
+            cancelButtonText: 'CANCELAR',
+            customClass: {
+                popup: 'swal2-custom-popup'
+            },
+            buttonsStyling: false,
+            reverseButtons: true
+        });
+        
+        if (resultado.isConfirmed) {
+            // 1. Eliminar todo el cache
+            localStorage.removeItem(CACHE_KEY);
+            
+            // 2. Recargar la vista
+            cargarHistorico();
+            
+            // 3. Ocultar el botón después de limpiar
+            document.getElementById('btn-limpiar-todo-hist').style.display = 'none';
+            
+            // 4. Mostrar mensaje de éxito
+            Swal.fire({
+                title: '¡HISTÓRICO LIMPIO!',
+                text: '¡Todo el historial ha sido eliminado!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-custom-popup'
+                },
+                buttonsStyling: false
+            });
+        }
+    }
+
+    // ===== CONFIGURAR EVENT LISTENERS =====
+
+    // 1. Cuando se carga la página, cargar histórico
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Página de histórico cargada");
+        cargarHistorico();
+    });
+
+    // 2. Configurar botón "LIMPIAR HISTÓRICO"
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnLimpiarTodoHist = document.getElementById('btn-limpiar-todo-hist');
+        if (btnLimpiarTodoHist) {
+            btnLimpiarTodoHist.addEventListener('click', limpiarTodoHistorico);
+        }
+    });
+
+    // 3. Función de debug para verificar
+    function verificarHistorico() {
+        const cache = obtenerCache();
+        const cantidad = Object.keys(cache).length;
+        console.log('=== VERIFICACIÓN DE HISTÓRICO ===');
+        console.log('Total de entradas en cache:', cantidad);
+        console.log('Cache completo:', cache);
+        console.log('=== FIN VERIFICACIÓN ===');
+    }
+
+    // Llama a esta función para verificar
+    verificarHistorico();
+
+</script>
+</body>
+</html>
