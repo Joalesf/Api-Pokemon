@@ -345,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <style>
 .card {
     width: 420px;
+    height: auto;
     z-index: 10;
     display: flex;
     flex-direction: column;
@@ -355,8 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
     padding: 16px;
     margin-bottom: 30px;
     position: relative;
-    overflow: hidden;
-
 }
 
 
@@ -628,9 +627,10 @@ document.addEventListener('DOMContentLoaded', () => {
     transform: translateY(-1px);
 }
 
-#resultado {
-    position: relative;
-    margin-top: 900px;
+   #resultado {
+    margin-top: 300px;
+    display: flex;
+    justify-content: center;
 }
 /* Mejorar el título del Pokémon */
 .card h2 {
@@ -658,5 +658,3 @@ img {
 }
 
 </style>
-
-
