@@ -1,195 +1,1185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Pokémon Finder - VS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Finder - VS</title>
 
-<link rel="stylesheet" href="shared.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="shared.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<style>
-#btn-buscar-vs,#btn-historico-vs,#btn-vs-vs,#btn-favoritos-vs{
-    width:130px;height:50px;
-    background:white;
-    border:4px solid var(--border-color);
-    box-shadow:var(--shadow);
-    font-family:var(--font-family);
-    font-weight:900;
-}
-#btn-vs-vs{background:var(--color-success);color:white;}
-#btn-buscar-vs:hover,#btn-historico-vs:hover,
-#btn-vs-vs:hover,#btn-favoritos-vs:hover{
-    transform:translateY(-4px) scale(1.02);cursor:pointer;
-}
+  <style>
+    #btn-buscar-vs{
+      width: 120px;
+      height: 50px;
+      background-color: white;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      transition: transform 0.4s ease;
+    }
 
-.vs-bar{
-    position:fixed;top:230px;left:50%;
-    transform:translateX(-50%);
-    display:grid;
-    grid-template-columns:1fr 80px 1fr;
-    gap:10px;
-    width:100%;max-width:700px;
-}
-.vs-input{
-    height:44px;
-    border:4px solid var(--border-color);
-    font-family:var(--font-family);
-    font-weight:900;
-    padding:0 10px;
-}
-.vs-btn{
-    height:44px;
-    background:var(--color-error);
+    #btn-historico-vs{
+      width: 150px;
+      height: 50px;
+      background-color: white;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      transition: transform 0.4s ease;
+    }
+
+    #btn-vs-vs{
+        background:var(--color-success);
     color:white;
-    border:4px solid var(--border-color);
-    font-weight:900;
-}
+      width: 90px;
+      height: 50px;
+      background-color: var(--color-success); /* ACTIVO */
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      transition: transform 0.3s ease;
+      color: white;
+    }
 
-#btn-batallar{
-    position:fixed;
-    top:290px;left:50%;
-    transform:translateX(-50%);
-    width:300px;height:60px;
-    background:var(--color-error);
-    color:white;
-    border:4px solid var(--border-color);
-    font-weight:900;
-    font-size:20px;
-}
-#btn-batallar:disabled{opacity:.5}
+    #btn-favoritos-vs{
+      width: 130px;
+      height: 50px;
+      background-color: white;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      transition: transform 0.3s ease;
+    }
 
-.vs-cards{
-    position:fixed;
-    top:370px;left:50%;
-    transform:translateX(-50%);
-    display:grid;
-    grid-template-columns:1fr 60px 1fr;
-    gap:10px;
-    width:100%;max-width:700px;
-}
-.vs-center{
-    display:flex;align-items:center;justify-content:center;
-    font-size:30px;font-weight:900;
-}
-.poke-card{
-    background:white;
-    border:4px solid var(--border-color);
-    box-shadow:var(--shadow);
-    padding:10px;
-    text-align:center;
-    font-family:var(--font-family);
-}
-.placeholder{
-    background:#e0e0e0;
-    font-size:60px;
-    font-weight:900;
-}
+    #btn-buscar-vs:hover,
+    #btn-historico-vs:hover,
+    #btn-vs-vs:hover,
+    #btn-favoritos-vs:hover{
+      cursor: pointer;
+      transform: translateY(-4px) scale(1.02);
+    }
 
-.swal2-popup{
-    font-family:var(--font-family)!important;
-    border:4px solid var(--border-color)!important;
+    .vs-bar{
+      position: fixed;
+      top: 230px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 760px;
+      z-index: 10;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .vs-col{
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .vs-input{
+      width: 100%;
+      height: 44px;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      padding: 0 10px;
+      outline: none;
+      text-transform: uppercase;
+      background: white;
+    }
+
+    .vs-btn-buscar{
+      width: 110px;
+      height: 44px;
+      background: var(--color-error);
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-weight: 900;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .vs-btn-buscar:hover{
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .vs-middle{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-family);
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: -1px;
+      color: var(--color-primary);
+      user-select: none;
+    }
+
+    .btn-batallar{
+      position: fixed;
+      top: 290px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 64px;
+      z-index: 11;
+      background: var(--color-error);
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      font-weight: 900;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-batallar:hover{
+      transform: translateX(-50%) translateY(-4px) scale(1.02);
+    }
+
+    .btn-batallar:disabled{
+      cursor: not-allowed;
+      opacity: 0.55;
+      filter: grayscale(30%);
+      transform: translateX(-50%);
+    }
+
+    .vs-cards{
+      position: fixed;
+      top: 370px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 760px;
+      z-index: 10;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 12px;
+      align-items: start;
+      justify-items: center;
+    }
+
+    .vs-icon-center{
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      background: white;
+      font-size: 26px;
+      user-select: none;
+    }
+
+    .poke-card{
+      width: 100%;
+      max-width: 280px;
+      min-height: 240px;
+      background: white;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      position: relative;
+      padding: 14px 14px 16px 14px;
+      display: grid;
+      grid-template-rows: 26px 90px auto;
+      gap: 10px;
+    }
+
+    .poke-card.placeholder{
+      background: #e9e9e9;
+    }
+
+    .badge-fuente{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 8px;
+      border: solid 3px var(--border-color);
+      font-weight: 900;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      background: white;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-fuente.api{
+      background: #dff7ff;
+    }
+
+    .badge-fuente.cache{
+      background: #e5ffe9;
+    }
+
+    .poke-topline{
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .poke-id{
+      font-weight: 900;
+      color: var(--color-primary);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .poke-name{
+      font-weight: 900;
+      color: var(--color-primary);
+      font-size: 14px;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .poke-img-wrap{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .poke-img{
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border: 3px solid black;
+      background-image: repeating-linear-gradient(
+        45deg,
+        #FFFFFF 0px,
+        #ffffff 8px,
+        #e0e0e0 8px,
+        #e0e0e0 16px
+      );
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    .poke-types{
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .poke-type{
+      background-color: var(--color-primary);
+      color: white;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 2px solid var(--border-color);
+      text-align: center;
+      min-width: 56px;
+    }
+
+    .btn-fav{
+      margin: 8px auto 0 auto;
+      width: 60px;
+      height: 60px;
+      border: solid 4px var(--border-color);
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+      background: pink;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      font-size: 26px;
+      user-select: none;
+    }
+
+    .btn-fav:hover{ transform: translateY(-3px) scale(1.05); }
+
+    .btn-fav.fav-on{
+      background: #ff5ca1;
+    }
+
+    .btn-fav.fav-on::before{ content: "❤️"; }
+    .btn-fav:not(.fav-on)::before{ content: "🤍"; }
+
+    .placeholder-question{
+      font-weight: 900;
+      font-size: 64px;
+      color: #777;
+      text-align: center;
+      margin: 0;
+      padding-top: 40px;
+      user-select: none;
+    }
+
+    .panel-result{
+      position: fixed;
+      top: 630px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 760px;
+      z-index: 10;
+      padding: 12px 14px;
+      display: none; 
+    }
+
+    .panel-box{
+      background: white;
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      font-family: var(--font-family);
+      padding: 14px;
+    }
+
+    .panel-title{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      margin: 0;
+      color: var(--color-primary);
+      font-size: 18px;
+    }
+
+    .dash{
+      margin: 12px 0;
+      border-top: 3px dashed #111;
+    }
+
+    .result-grid{
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .result-card{
+      border: solid 4px var(--border-color);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display: grid;
+      grid-template-rows: 100px auto auto;
+      gap: 10px;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .result-card.loser{
+      background: #dcdcdc;
+    }
+
+    .result-card.winner{
+      background: #71ff67;
+      position: relative;
+    }
+
+    .winner-badge{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffe38a;
+      border: solid 4px var(--border-color);
+      padding: 6px 10px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .res-name{
+      text-transform: uppercase;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .res-types{
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .pts{
+      font-size: 22px;
+      margin: 0;
+      color: #d22;
+      letter-spacing: -1px;
+    }
+
+    .analysis-section{
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .subpanel{
+      border: solid 3px var(--border-color);
+      background: #e9e9e9;
+      padding: 12px;
+    }
+
+    .subpanel h3{
+      margin: 0 0 10px 0;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .type-rows{
+      display: grid;
+      gap: 8px;
+    }
+
+    .type-row{
+      border: solid 3px var(--border-color);
+      padding: 10px;
+      font-weight: 900;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .type-row.bad{
+      background: #ff4b4b;
+      color: white;
+    }
+
+    .type-row.good{
+      background: #65ff73;
+      color: #111;
+    }
+
+    .stats-grid{
+      display: grid;
+      gap: 8px;
+    }
+
+    .stat-line{
+      display: grid;
+      grid-template-columns: 40px 1fr 36px;
+      gap: 10px;
+      align-items: center;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .bar{
+      height: 14px;
+      border: solid 3px var(--border-color);
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar .fillA{
+      height: 100%;
+      width: 50%;
+      background: #61f3ff;
+    }
+
+    .bar .fillB{
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 50%;
+      background: #7dff6b;
+    }
+
+    .bar .label{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 10px;
+      background: #ffe38a;
+      border: solid 2px var(--border-color);
+      padding: 1px 6px;
+      line-height: 1;
+    }
+
+    .calc{
+      font-family: var(--font-family);
+      font-weight: 900;
+      font-size: 12px;
+      line-height: 1.6;
+      background: white;
+      border: solid 3px var(--border-color);
+      padding: 10px;
+    }
+
+    .swal2-popup {
+      font-family: var(--font-family) !important;
+      border: solid 4px var(--border-color) !important;
+      box-shadow: var(--shadow) !important;
+      border-radius: 10px !important;
+    }
+    .swal2-title {
+      color: var(--color-primary) !important;
+      font-weight: 900 !important;
+      font-size: 22px !important;
+      text-transform: uppercase !important;
+      letter-spacing: -1px !important;
+    }
+    .swal2-html-container {
+      color: #333 !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+    .swal2-confirm {
+      background-color: var(--color-error) !important;
+      border: solid 3px var(--border-color) !important;
+      color: white !important;
+      font-family: var(--font-family) !important;
+      font-weight: 900 !important;
+      font-size: 16px !important;
+      text-transform: uppercase !important;
+      letter-spacing: -0.5px !important;
+      padding: 12px 30px !important;
+      transition: all 0.3s ease !important;
+    }
+    .swal2-cancel {
+      background-color: var(--color-primary) !important;
+      border: solid 3px var(--border-color) !important;
+      color: white !important;
+      font-family: var(--font-family) !important;
+      font-weight: 900 !important;
+      font-size: 16px !important;
+      text-transform: uppercase !important;
+      letter-spacing: -0.5px !important;
+      padding: 12px 30px !important;
+      transition: all 0.3s ease !important;
+    }
+    .swal2-confirm:hover,
+    .swal2-cancel:hover {
+      transform: translateY(-3px) scale(1.05) !important;
+    }
+
+    body{
+    overflow-y:auto;
 }
-</style>
+  </style>
 </head>
 
 <body>
-<div class="contenedor">
+  <div class="contenedor">
 
-<div class="titulo">
-    <h1>⚔️ POKÉMON VS ⚔️</h1>
-</div>
-
-<div class="botones">
-    <button id="btn-buscar-vs">🔍 BUSCAR</button>
-    <button id="btn-historico-vs">📜 HISTÓRICO</button>
-    <button id="btn-vs-vs">⚔ VS</button>
-    <button id="btn-favoritos-vs">❤️ FAVORITOS</button>
-</div>
-
-
-<div class="vs-bar">
-    <div>
-        <input id="input-p1" class="vs-input" placeholder="POKÉMON 1">
-        <button id="buscar-p1" class="vs-btn">BUSCAR</button>
+    <div class="titulo">
+      <h1>⚔️POKÉMON VS⚔️</h1>
     </div>
 
-    <div class="vs-center">VS</div>
-
-    <div>
-        <input id="input-p2" class="vs-input" placeholder="POKÉMON 2">
-        <button id="buscar-p2" class="vs-btn">BUSCAR</button>
+    <div class="botones">
+      <button id="btn-buscar-vs">🔍 BUSCAR</button>
+      <button id="btn-historico-vs">📜 HISTÓRICO</button>
+      <button id="btn-vs-vs">⚔ VS</button>
+      <button id="btn-favoritos-vs">❤️ FAVORITOS</button>
     </div>
-</div>
 
-<button id="btn-batallar" disabled>⚔ ¡BATALLAR!</button>
+    <div class="vs-bar">
+      <div class="vs-col">
+        <input id="input-p1" class="vs-input" placeholder="POKÉMON 1..." autocomplete="off" />
+        <button id="btn-buscar-p1" class="vs-btn-buscar">BUSCAR</button>
+      </div>
+
+      <div class="vs-middle">VS</div>
+
+      <div class="vs-col">
+        <input id="input-p2" class="vs-input" placeholder="POKÉMON 2..." autocomplete="off" />
+        <button id="btn-buscar-p2" class="vs-btn-buscar">BUSCAR</button>
+      </div>
+    </div>
+
+    <button id="btn-batallar" class="btn-batallar" disabled>
+      ⚔ ¡BATALLAR!
+    </button>
 
 
-<div class="vs-cards">
-    <div id="card1" class="poke-card placeholder">?</div>
-    <div class="vs-center">⚔</div>
-    <div id="card2" class="poke-card placeholder">?</div>
-</div>
+    <div class="vs-cards">
+      <div id="card-p1" class="poke-card placeholder">
+        <p class="placeholder-question">?</p>
+      </div>
 
-<div class="circulo"><div class="linea"><div class="circulo1"></div></div></div>
-</div>
+      <div class="vs-icon-center">⚔</div>
+
+      <div id="card-p2" class="poke-card placeholder">
+        <p class="placeholder-question">?</p>
+      </div>
+    </div>
+
+    <div id="panel-result" class="panel-result">
+      <div class="panel-box">
+        <h2 class="panel-title">⚔ RESULTADO DE LA BATALLA ⚔</h2>
+        <div class="dash"></div>
+
+        <div class="result-grid">
+          <div id="res-left" class="result-card loser"></div>
+          <div class="vs-icon-center" style="align-self:center;">VS</div>
+          <div id="res-right" class="result-card winner"></div>
+        </div>
+
+        <div class="dash"></div>
+
+        <h2 class="panel-title">📊 ANÁLISIS DE BATALLA</h2>
+
+        <div class="analysis-section">
+          <div class="subpanel">
+            <h3>⚡ VENTAJAS DE TIPO</h3>
+            <div id="type-rows" class="type-rows"></div>
+          </div>
+
+          <div class="subpanel">
+            <h3>📈 COMPARACIÓN DE STATS</h3>
+            <div id="stats-grid" class="stats-grid"></div>
+          </div>
+
+          <div class="subpanel">
+            <h3>🧮 CÁLCULO DEL PUNTAJE</h3>
+            <div id="calc-box" class="calc"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="circulo">
+      <div class="linea">
+        <div class="circulo1"></div>
+      </div>
+    </div>
+
+  </div>
 
 <script>
+  const CACHE_KEY = 'pokemon_cache';
+  const FAVORITOS_KEY = 'pokemon_favoritos';
 
-btn('btn-buscar-vs','index.html');
-btn('btn-historico-vs','historico.html');
-btn('btn-favoritos-vs','favoritos.html');
+  const CACHE_TTL_MS = 5 * 60 * 1000;
 
-function btn(id,link){
-    document.getElementById(id).onclick=()=>location.href=link;
-}
+  // Estado VS
+  let P1 = null; 
+  let P2 = null;
+
+  const typeCache = new Map();
+
+  /* ===================== NAV ===================== */
+  document.getElementById('btn-buscar-vs').addEventListener('click', () => window.location.href = 'index.html');
+  document.getElementById('btn-historico-vs').addEventListener('click', () => window.location.href = 'historico.html');
+  document.getElementById('btn-favoritos-vs').addEventListener('click', () => window.location.href = 'favoritos.html');
+  document.getElementById('btn-vs-vs').addEventListener('click', () => window.location.href = 'vs.html');
+
+  function obtenerCache() {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return {};
+    try { return JSON.parse(raw); } catch(e) { return {}; }
+  }
+
+  function guardarCache(cacheObj) {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheObj));
+  }
+
+  function limpiarCacheExpirado() {
+    const cache = obtenerCache();
+    const now = Date.now();
+    let changed = false;
+
+    for (const key in cache) {
+      const item = cache[key];
+      if (!item || !item.timestamp || !item.expiry) continue;
+      if ((now - item.timestamp) > item.expiry) {
+        delete cache[key];
+        changed = true;
+      }
+    }
+
+    if (changed) guardarCache(cache);
+  }
+
+  function normalizarQuery(q) {
+    return String(q || '').trim().toLowerCase();
+  }
+
+  function getCacheItem(queryKey) {
+    const cache = obtenerCache();
+    const item = cache[queryKey];
+    if (!item) return null;
+
+    const now = Date.now();
+    if (!item.timestamp || !item.expiry) return null;
+    if ((now - item.timestamp) > item.expiry) {
+      // expirado
+      delete cache[queryKey];
+      guardarCache(cache);
+      return null;
+    }
+    return item;
+  }
+
+  function setCacheItem(queryKey, data) {
+    const cache = obtenerCache();
+    cache[queryKey] = {
+      timestamp: Date.now(),
+      expiry: CACHE_TTL_MS,
+      data
+    };
+    guardarCache(cache);
+  }
+
+  function obtenerFavoritos() {
+    return JSON.parse(localStorage.getItem(FAVORITOS_KEY) || '[]');
+  }
+
+  function estaEnFavoritos(id) {
+    const favs = obtenerFavoritos();
+    return favs.some(f => f.id === id);
+  }
+
+  function toggleFavorito(pokemonData) {
+    const favs = obtenerFavoritos();
+    const idx = favs.findIndex(f => f.id === pokemonData.id);
+
+    if (idx === -1) {
+      favs.push({ nombre: pokemonData.name, id: pokemonData.id, fecha: new Date().toISOString() });
+      localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favs));
+
+      Swal.fire({
+        title: '¡AGREGADO A FAVORITOS!',
+        html: `¡<strong>${pokemonData.name.toUpperCase()}</strong> agregado a favoritos!`,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        buttonsStyling: false,
+        timer: 1300,
+        timerProgressBar: true
+      });
+
+      return true;
+    } else {
+      favs.splice(idx, 1);
+      localStorage.setItem(FAVORITOS_KEY, JSON.stringify(favs));
+
+      Swal.fire({
+        title: '¡ELIMINADO DE FAVORITOS!',
+        html: `¡<strong>${pokemonData.name.toUpperCase()}</strong> eliminado de favoritos!`,
+        icon: 'info',
+        confirmButtonText: 'OK',
+        buttonsStyling: false,
+        timer: 1300,
+        timerProgressBar: true
+      });
+
+      return false;
+    }
+  }
+
+  async function buscarPokemon(query) {
+    limpiarCacheExpirado();
+
+    const q = normalizarQuery(query);
+    if (!q) {
+      return { ok:false, error:'Escribe un ID o nombre.' };
+    }
+
+    const cached = getCacheItem(q);
+    if (cached && cached.data) {
+      return { ok:true, data: cached.data, source:'CACHÉ' };
+    }
 
 
-let p1=null,p2=null;
+    try{
+      const resp = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(q)}`);
+      if (!resp.ok) {
+        return { ok:false, error:`No encontré "${query}". Revisa el nombre o ID.` };
+      }
+      const data = await resp.json();
 
+      setCacheItem(q, data);
+      setCacheItem(String(data.id), data);
+      setCacheItem(String(data.name).toLowerCase(), data);
 
-async function buscarPokemon(q){
-    const r=await fetch(`https://pokeapi.co/api/v2/pokemon/${q}`);
-    if(!r.ok) return null;
-    return await r.json();
-}
+      return { ok:true, data, source:'API' };
+    } catch(err){
+      return { ok:false, error:'Error conectando con la PokeAPI. Intenta de nuevo.' };
+    }
+  }
 
+  function renderPlaceholder(cardEl){
+    cardEl.className = 'poke-card placeholder';
+    cardEl.innerHTML = `<p class="placeholder-question">?</p>`;
+  }
 
-function render(card,p){
-    card.className='poke-card';
-    card.innerHTML=`
-        <h3>#${p.id} ${p.name.toUpperCase()}</h3>
-        <img src="${p.sprites.front_default}" width="96">
+  function renderCard(cardEl, slotName, payload){
+    const { data, source } = payload;
+    const img = (data.sprites && data.sprites.front_default)
+      || (data.sprites && data.sprites.other && data.sprites.other['official-artwork'] && data.sprites.other['official-artwork'].front_default)
+      || '';
+
+    const enFav = estaEnFavoritos(data.id);
+
+    cardEl.className = 'poke-card';
+    cardEl.innerHTML = `
+      <span class="badge-fuente ${source === 'API' ? 'api':'cache'}">
+        🧊 ${source}
+      </span>
+
+      <div class="poke-topline">
+        <p class="poke-id">#${data.id}</p>
+        <p class="poke-name">${String(data.name).toUpperCase()}</p>
+      </div>
+
+      <div class="poke-img-wrap">
+        <img class="poke-img" src="${img}" alt="${data.name}">
+      </div>
+
+      <div>
+        <div class="poke-types">
+          ${data.types.map(t => `<span class="poke-type">${t.type.name.toUpperCase()}</span>`).join('')}
+        </div>
+
+        <button class="btn-fav ${enFav ? 'fav-on':''}" id="btn-fav-${slotName}" title="${enFav ? 'Quitar de favoritos':'Agregar a favoritos'}"></button>
+      </div>
     `;
-}
 
+    // evento favoritos
+    const btnFav = document.getElementById(`btn-fav-${slotName}`);
+    btnFav.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nowOn = toggleFavorito(data);
+      btnFav.classList.toggle('fav-on', nowOn);
+      btnFav.title = nowOn ? 'Quitar de favoritos' : 'Agregar a favoritos';
+    });
+  }
 
-document.getElementById('buscar-p1').onclick=async()=>{
-    const q=input('input-p1');
-    const p=await buscarPokemon(q);
-    if(!p) return alertError();
-    p1=p; render(card1,p1); check();
-};
+  function updateBatallarState(){
+    const btn = document.getElementById('btn-batallar');
+    btn.disabled = !(P1 && P2);
+  }
 
-document.getElementById('buscar-p2').onclick=async()=>{
-    const q=input('input-p2');
-    const p=await buscarPokemon(q);
-    if(!p) return alertError();
-    p2=p; render(card2,p2); check();
-};
+  async function getTypeData(typeName){
+    const key = String(typeName).toLowerCase();
+    if (typeCache.has(key)) return typeCache.get(key);
 
-function check(){
-    document.getElementById('btn-batallar').disabled=!(p1&&p2);
-}
+    const resp = await fetch(`https://pokeapi.co/api/v2/type/${encodeURIComponent(key)}`);
+    const data = await resp.json();
+    typeCache.set(key, data);
+    return data;
+  }
 
-function input(id){return document.getElementById(id).value.trim().toLowerCase();}
-function alertError(){
-    Swal.fire('Error','Pokémon no encontrado','error');
-}
+  function multiplierVsOneType(typeData, defenderTypeName){
+    const def = String(defenderTypeName).toLowerCase();
+    const rel = typeData.damage_relations;
 
-document.getElementById('btn-batallar').onclick=()=>{
-    Swal.fire('VS LISTO','La batalla se implementa en el próximo commit','success');
-};
+    if (rel.no_damage_to.some(x => x.name === def)) return 0;
+    let mult = 1;
+
+    if (rel.double_damage_to.some(x => x.name === def)) mult *= 2;
+    if (rel.half_damage_to.some(x => x.name === def)) mult *= 0.5;
+
+    return mult;
+  }
+
+  async function bestMultiplier(attackerTypes, defenderTypes){
+    let best = 1;
+
+    for (const atk of attackerTypes){
+      const typeData = await getTypeData(atk);
+      let mult = 1;
+      for (const def of defenderTypes){
+        mult *= multiplierVsOneType(typeData, def);
+      }
+      if (mult > best) best = mult;
+    }
+
+    return best;
+  }
+
+  function baseStatTotal(pokemonData){
+    return pokemonData.stats.reduce((acc, s) => acc + (s.base_stat || 0), 0);
+  }
+
+  function getStat(pokemonData, statName){
+    const s = pokemonData.stats.find(x => x.stat.name === statName);
+    return s ? s.base_stat : 0;
+  }
+
+  async function batallar(){
+    if (!P1 || !P2) return;
+
+    const a = P1.data;
+    const b = P2.data;
+
+    const aTypes = a.types.map(t => t.type.name);
+    const bTypes = b.types.map(t => t.type.name);
+
+    const multA = await bestMultiplier(aTypes, bTypes);
+    const multB = await bestMultiplier(bTypes, aTypes);
+
+    const baseA = baseStatTotal(a);
+    const baseB = baseStatTotal(b);
+
+    const ptsA = baseA * multA;
+    const ptsB = baseB * multB;
+
+    let left = { poke: a, mult: multA, base: baseA, pts: ptsA };
+    let right = { poke: b, mult: multB, base: baseB, pts: ptsB };
+
+    const leftWins = ptsA >= ptsB;
+
+    renderResultado(left, right, leftWins);
+    renderAnalisis(left, right);
+  }
+
+  function renderResultado(left, right, leftWins){
+    const panel = document.getElementById('panel-result');
+    panel.style.display = 'block';
+
+    const leftEl = document.getElementById('res-left');
+    const rightEl = document.getElementById('res-right');
+
+    const leftCardClass = leftWins ? 'result-card winner' : 'result-card loser';
+    const rightCardClass = leftWins ? 'result-card loser' : 'result-card winner';
+
+    leftEl.className = leftCardClass;
+    rightEl.className = rightCardClass;
+
+    leftEl.innerHTML = buildResCardHTML(left.poke, left.pts, leftWins);
+    rightEl.innerHTML = buildResCardHTML(right.poke, right.pts, !leftWins);
+  }
+
+  function buildResCardHTML(poke, pts, isWinner){
+    const img = (poke.sprites && poke.sprites.front_default)
+      || (poke.sprites && poke.sprites.other && poke.sprites.other['official-artwork'] && poke.sprites.other['official-artwork'].front_default)
+      || '';
+
+    const typesHTML = poke.types.map(t => `<span class="poke-type" style="font-size:9px;padding:3px 7px;">${t.type.name.toUpperCase()}</span>`).join('');
+
+    return `
+      ${isWinner ? `<div class="winner-badge">🏆 GANADOR</div>` : ``}
+      <div class="poke-img-wrap">
+        <img class="poke-img" src="${img}" alt="${poke.name}" style="width:86px;height:86px;">
+      </div>
+      <p class="res-name">${poke.name.toUpperCase()}</p>
+      <div class="res-types">${typesHTML}</div>
+      <p class="pts">${pts.toFixed(1)} pts</p>
+      <button class="btn-fav ${estaEnFavoritos(poke.id) ? 'fav-on':''}" id="btn-fav-res-${poke.id}" title="Favoritos"></button>
+    `;
+  }
+
+  function renderAnalisis(left, right){
+    const typeRows = document.getElementById('type-rows');
+    typeRows.innerHTML = '';
+
+    const lName = left.poke.name;
+    const rName = right.poke.name;
+
+    const lAtkType = left.poke.types[0].type.name;
+    const rAtkType = right.poke.types[0].type.name;
+
+    const row1Class = left.mult < 1 ? 'bad' : (left.mult > 1 ? 'good' : 'good');
+    const row2Class = right.mult < 1 ? 'bad' : (right.mult > 1 ? 'good' : 'good');
+
+    const row1Text = `${lName} vs ${rName}: x${left.mult.toFixed(2)}\n${lAtkType} ${left.mult > 1 ? 'es super efectivo' : (left.mult < 1 ? 'es poco efectivo' : 'es neutral')} contra ${right.poke.types.map(t=>t.type.name).join('/')}`;
+    const row2Text = `${rName} vs ${lName}: x${right.mult.toFixed(2)}\n${rAtkType} ${right.mult > 1 ? 'es super efectivo' : (right.mult < 1 ? 'es poco efectivo' : 'es neutral')} contra ${left.poke.types.map(t=>t.type.name).join('/')}`;
+
+    const r1 = document.createElement('div');
+    r1.className = `type-row ${row1Class}`;
+    r1.textContent = row1Text;
+
+    const r2 = document.createElement('div');
+    r2.className = `type-row ${row2Class}`;
+    r2.textContent = row2Text;
+
+    typeRows.appendChild(r1);
+    typeRows.appendChild(r2);
+
+    const statsGrid = document.getElementById('stats-grid');
+    statsGrid.innerHTML = '';
+
+    const statDefs = [
+      { key:'hp', label:'HP' },
+      { key:'attack', label:'ATK' },
+      { key:'defense', label:'DEF' },
+      { key:'special-attack', label:'SP.ATK' },
+      { key:'special-defense', label:'SP.DEF' },
+      { key:'speed', label:'SPD' }
+    ];
+
+    const MAX_STAT = 255;
+
+    for (const st of statDefs){
+      const aVal = getStat(left.poke, st.key);
+      const bVal = getStat(right.poke, st.key);
+
+      const aPct = Math.max(0, Math.min(100, (aVal / MAX_STAT) * 100));
+      const bPct = Math.max(0, Math.min(100, (bVal / MAX_STAT) * 100));
+
+      const line = document.createElement('div');
+      line.className = 'stat-line';
+      line.innerHTML = `
+        <div style="text-align:right;">${aVal}</div>
+        <div class="bar">
+          <div class="fillA" style="width:${aPct}%;"></div>
+          <div class="fillB" style="width:${bPct}%;"></div>
+          <div class="label">${st.label}</div>
+        </div>
+        <div>${bVal}</div>
+      `;
+      statsGrid.appendChild(line);
+    }
+
+    const calcBox = document.getElementById('calc-box');
+    calcBox.innerHTML = `
+      Stats Base Total: ${left.poke.name}: ${left.base} | ${right.poke.name}: ${right.base}<br>
+      Multiplicador de Tipo: ${left.poke.name}: x${left.mult.toFixed(2)} | ${right.poke.name}: x${right.mult.toFixed(2)}<br>
+      Puntaje Final: ${left.poke.name}: ${left.pts.toFixed(1)} | ${right.poke.name}: ${right.pts.toFixed(1)}
+    `;
+
+    setTimeout(() => {
+      const btnL = document.getElementById(`btn-fav-res-${left.poke.id}`);
+      const btnR = document.getElementById(`btn-fav-res-${right.poke.id}`);
+
+      if (btnL){
+        btnL.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          toggleFavorito(left.poke);
+          if (P1 && P1.data.id === left.poke.id) renderCard(document.getElementById('card-p1'), 'p1', P1);
+          if (P2 && P2.data.id === left.poke.id) renderCard(document.getElementById('card-p2'), 'p2', P2);
+          batallar();
+        });
+      }
+
+      if (btnR){
+        btnR.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          toggleFavorito(right.poke);
+          if (P1 && P1.data.id === right.poke.id) renderCard(document.getElementById('card-p1'), 'p1', P1);
+          if (P2 && P2.data.id === right.poke.id) renderCard(document.getElementById('card-p2'), 'p2', P2);
+          batallar();
+        });
+      }
+    }, 0);
+  }
+
+  async function buscarP1(){
+    const q = document.getElementById('input-p1').value;
+    const res = await buscarPokemon(q);
+
+    if (!res.ok){
+      Swal.fire({
+        title: 'NO ENCONTRADO',
+        text: res.error,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        buttonsStyling: false
+      });
+      return;
+    }
+
+    P1 = { data: res.data, source: res.source };
+    renderCard(document.getElementById('card-p1'), 'p1', P1);
+    updateBatallarState();
+
+    document.getElementById('panel-result').style.display = 'none';
+  }
+
+  async function buscarP2(){
+    const q = document.getElementById('input-p2').value;
+    const res = await buscarPokemon(q);
+
+    if (!res.ok){
+      Swal.fire({
+        title: 'NO ENCONTRADO',
+        text: res.error,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        buttonsStyling: false
+      });
+      return;
+    }
+
+    P2 = { data: res.data, source: res.source };
+    renderCard(document.getElementById('card-p2'), 'p2', P2);
+    updateBatallarState();
+
+    document.getElementById('panel-result').style.display = 'none';
+  }
+
+  document.getElementById('btn-buscar-p1').addEventListener('click', buscarP1);
+  document.getElementById('btn-buscar-p2').addEventListener('click', buscarP2);
+
+  document.getElementById('input-p1').addEventListener('keydown', (e)=>{ if (e.key === 'Enter') buscarP1(); });
+  document.getElementById('input-p2').addEventListener('keydown', (e)=>{ if (e.key === 'Enter') buscarP2(); });
+
+  document.getElementById('btn-batallar').addEventListener('click', async ()=>{
+
+    if (!P1 || !P2) return;
+
+    const res = await Swal.fire({
+      title: '¡A BATALLAR!',
+      html: `¿Listo para enfrentar a <strong>${P1.data.name.toUpperCase()}</strong> vs <strong>${P2.data.name.toUpperCase()}</strong>?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'SÍ, BATALLAR',
+      cancelButtonText: 'CANCELAR',
+      buttonsStyling: false,
+      reverseButtons: true
+    });
+
+    if (res.isConfirmed){
+      batallar();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    limpiarCacheExpirado();
+    renderPlaceholder(document.getElementById('card-p1'));
+    renderPlaceholder(document.getElementById('card-p2'));
+    updateBatallarState();
+  });
 </script>
 </body>
 </html>
