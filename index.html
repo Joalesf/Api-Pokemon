@@ -164,7 +164,12 @@ const evoluciones = await obtenerCadenaEvolutiva(pokemon);
             </div>
             `).join("")}
         </div>
-        <button class="btn-favoritos2" onclick="agregarAFavoritos('${pokemon.name}', ${pokemon.id})">&#x2764;&#xFE0F;</button>
+        <button 
+    class="btn-favoritos2 ${esFavorito(pokemon.id) ? 'favorito' : ''}"
+    onclick="toggleFavorito('${pokemon.name}', ${pokemon.id}, this)">
+    &#x2764;&#xFE0F;
+</button>
+
         <div class="lineaFragmentada"></div>
         <p class="evoluciones-Titulo">CADENA DE EVOLUCIÓN</p>
          <div class="evoluciones">
@@ -244,6 +249,27 @@ function agregarAFavoritos(nombre, id) {
         alert(`¡${nombre.toUpperCase()} ya está en favoritos!`);
     }
 }
+
+function esFavorito(id) {
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    return favoritos.some(fav => fav.id === id);
+}
+
+function toggleFavorito(nombre, id, boton) {
+    const favoritos = JSON.parse(localStorage.getItem('pokemon_favoritos') || '[]');
+    const index = favoritos.findIndex(fav => fav.id === id);
+
+    if (index === -1) {
+        favoritos.push({ nombre, id, fecha: new Date().toISOString() });
+        boton.classList.add("favorito");
+    } else {
+        favoritos.splice(index, 1);
+        boton.classList.remove("favorito");
+    }
+
+    localStorage.setItem('pokemon_favoritos', JSON.stringify(favoritos));
+}
+
 
 </script>
 
@@ -706,6 +732,20 @@ h3{
 .pokemon-btn:hover {
     background-color: var(--color-accent); /* amarillo */
     transform: translateY(-3px) scale(1.05);
+}
+
+.btn-favoritos2 {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: filter 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+}
+
+/* CUANDO ES FAVORITO */
+.btn-favoritos2.favorito {
+    filter: grayscale(0%);
+    opacity: 1;
+    background-color: pink;
+    transform: scale(1.1);
 }
 
 </style>
