@@ -73,13 +73,14 @@
     }
 
     .vs-bar{
-      position: fixed;
-      top: 230px;
-      left: 50%;
+      position: relative;
+      top: 170px;
+      left: 30%;
       transform: translateX(-50%);
       width: 100%;
-      max-width: 760px;
-      z-index: 10;
+      max-width: 800px;
+      margin: 20px auto;
+      z-index: 20;
       padding: 10px 14px;
       display: grid;
       grid-template-columns: 1fr 120px 1fr;
@@ -89,13 +90,14 @@
 
     .vs-col{
       display: grid;
-      grid-template-columns: 1fr 110px;
+      grid-template-columns: 2fr 110px;
       gap: 8px;
       align-items: center;
     }
 
     .vs-input{
       width: 100%;
+      min-width: 180px;
       height: 44px;
       border: solid 4px var(--border-color);
       box-shadow: var(--shadow);
@@ -139,13 +141,13 @@
     }
 
     .btn-batallar{
-      position: fixed;
-      top: 290px;
-      left: 50%;
+      position: relative;
+      top: auto;
+      left: 33%;
       transform: translateX(-50%);
       width: 320px;
       height: 64px;
-      z-index: 11;
+      z-index: 21;
       background: var(--color-error);
       border: solid 4px var(--border-color);
       box-shadow: var(--shadow);
@@ -160,6 +162,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
+      margin: 155px auto;
     }
 
     .btn-batallar:hover{
@@ -174,10 +177,11 @@
     }
 
     .vs-cards{
-      position: fixed;
-      top: 370px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      margin: 1% auto;
       width: 100%;
       max-width: 760px;
       z-index: 10;
@@ -187,6 +191,7 @@
       gap: 12px;
       align-items: start;
       justify-items: center;
+      margin: -145px auto;
     }
 
     .vs-icon-center{
@@ -223,8 +228,8 @@
 
     .badge-fuente{
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 0;
+      right: 0;
       padding: 4px 8px;
       border: solid 3px var(--border-color);
       font-weight: 900;
@@ -264,7 +269,7 @@
       font-weight: 900;
       color: var(--color-primary);
       font-size: 14px;
-      margin: 0;
+      margin: 15px;
       text-transform: uppercase;
       letter-spacing: -0.5px;
     }
@@ -276,6 +281,7 @@
     }
 
     .poke-img{
+      margin: 10px;
       width: 90px;
       height: 90px;
       object-fit: contain;
@@ -348,8 +354,8 @@
     }
 
 .panel-result{
-  position: absolute;   
-  top: 690px;
+  position: relative;   
+  top: 170px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -358,11 +364,8 @@
   padding: 12px 14px;
   display: none;
 }
-.contenedor{
-  position: relative;
-}
 
-
+/* .panel-box { */
 
     .panel-box{
       background: white;
@@ -422,8 +425,8 @@
 
     .winner-badge{
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 0;
+      right: 0;
       background: #ffe38a;
       border: solid 4px var(--border-color);
       padding: 6px 10px;
@@ -522,6 +525,7 @@
       position: relative;
       overflow: hidden;
     }
+
 
     .bar .fillA{
       height: 100%;
@@ -716,7 +720,7 @@
   document.getElementById('btn-buscar-vs').addEventListener('click', () => window.location.href = 'index.html');
   document.getElementById('btn-historico-vs').addEventListener('click', () => window.location.href = 'historico.html');
   document.getElementById('btn-favoritos-vs').addEventListener('click', () => window.location.href = 'favoritos.html');
-  document.getElementById('btn-vs').addEventListener('click', () => window.location.href = 'vs.html');
+  document.getElementById('btn-vs-vs').addEventListener('click', () => window.location.href = 'vs.html');
 
   function obtenerCache() {
     const raw = localStorage.getItem(CACHE_KEY);
