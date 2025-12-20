@@ -25,7 +25,106 @@ Esta app está implementada utilizando **HTML, CSS y JavaScript puro**, sin fram
 
 ## 🚀 Instrucciones de Uso
 
-### 📥 Clonar el repositorio
+📘 INSTRUCCIONES DE USO
 
+1. Requisitos del sistema   
+Navegador web moderno (Google Chrome, Edge o Firefox)
+Conexión a Internet (para consultar la PokeAPI)
+JavaScript habilitado
+No requiere instalación adicional
+
+2. Inicio del programa
+Abrir el archivo index.html en el navegador.
+Al cargarse la página, el sistema inicializa automáticamente:
+La caché local
+El sistema de histórico
+El diseño visual y navegación
+
+3. Navegación principal
+En la parte superior se encuentran los botones principales:
+🔍 Buscar: búsqueda individual de Pokémon o habilidades
+📜 Histórico: muestra búsquedas recientes guardadas
+⚔️ VS: comparación entre dos Pokémon
+❤️ Favoritos: Pokémon guardados por el usuario
+Los botones permiten cambiar de sección sin perder información almacenada.
+
+4. Uso del Buscador
+Seleccionar el tipo de búsqueda:
+Pokémon
+Habilidad
+Escribir el nombre del Pokémon o habilidad.
+Presionar el botón Buscar.
+Resultados mostrados:
+Imagen del Pokémon
+Tipo(s)
+Estadísticas base
+Habilidades
+Cadena evolutiva
+Origen de los datos (API o Caché)
+📌 Los datos se guardan automáticamente en caché por 24 horas.
+
+5. Histórico de búsquedas
+En la sección Histórico se muestran:
+Pokémon buscados recientemente
+Fecha y hora de consulta
+Indicador de origen (API / Caché)
+Acciones disponibles:
+❤️ Agregar o quitar de favoritos
+🔄 Volver a buscar un Pokémon
+🗑️ Eliminar una búsqueda específica
+🧹 Limpiar todo el histórico
+
+6. Favoritos
+En la sección Favoritos:
+Se muestran todos los Pokémon marcados como favoritos
+Los datos se conservan aunque se cierre el navegador
+Acciones disponibles:
+❌ Eliminar un favorito
+🗑️ Eliminar todos los favoritos (con confirmación)
+
+7. Modo Pokémon VS
+Ingresar el nombre de dos Pokémon distintos.
+Presionar el botón de comparación.
+El sistema realiza automáticamente:
+Comparación de estadísticas base
+Evaluación de ventajas y desventajas de tipo
+Cálculo de puntaje total
+Determinación del ganador
+Resultados mostrados:
+Pokémon ganador
+Desglose de estadísticas
+Ventajas de tipo
+Explicación del resultado
+❤️ Ambos Pokémon pueden guardarse como favoritos.
+
+8. Sistema de caché
+Los datos consultados se almacenan en localStorage
+Duración de la caché: 24 horas
+Datos expirados se eliminan automáticamente
+Mejora el rendimiento y reduce consultas a la API
+
+9. Mensajes y alertas
+La aplicación utiliza SweetAlert para:
+Confirmaciones de eliminación
+Mensajes de error
+Advertencias
+Acciones exitosas
+Esto garantiza una experiencia clara e intuitiva.
+
+10. Consideraciones importantes
+Los nombres de Pokémon deben ingresarse correctamente.
+Sin conexión a Internet no se podrán realizar nuevas búsquedas.
+El almacenamiento local depende del navegador.
+
+11. Cierre  
+Pokémon Finder es una aplicación intuitiva y funcional que combina consumo de APIs, almacenamiento local y una interfaz amigable para explorar información Pokémon de manera eficiente.
+
+##  Capturas de pantalla
+
+<img width="959" height="435" alt="image" src="https://github.com/user-attachments/assets/106589a5-9769-493e-ba4a-6e2056ea6d86" />
+<img width="471" height="298" alt="image" src="https://github.com/user-attachments/assets/f7e4eca8-55bc-4fa2-b23b-12acc84d2c8e" />
+
+
+### 📥 Clonar el repositorio
 ```bash
 git clone https://github.com/Joalesf/Api-Pokemon
