@@ -122,8 +122,16 @@ Pokémon Finder es una aplicación intuitiva y funcional que combina consumo de 
 ##  Capturas de pantalla
 
 <img width="959" height="435" alt="image" src="https://github.com/user-attachments/assets/106589a5-9769-493e-ba4a-6e2056ea6d86" />
-<img width="471" height="298" alt="image" src="https://github.com/user-attachments/assets/f7e4eca8-55bc-4fa2-b23b-12acc84d2c8e" />
 
+<img width="251" height="298" alt="image" src="https://github.com/user-attachments/assets/f90e6259-1def-4b92-826f-4daf448eb210" />
+
+<img width="959" height="436" alt="image" src="https://github.com/user-attachments/assets/23d8a2bd-72a6-41c0-898f-6dc07918e3d5" />
+
+<img width="959" height="436" alt="image" src="https://github.com/user-attachments/assets/81b829f0-a0e2-45fa-8232-158e5ff78690" />
+
+<img width="685" height="436" alt="image" src="https://github.com/user-attachments/assets/642b3405-9f93-4f73-b656-105e262b1dad" />
+
+<img width="530" height="386" alt="image" src="https://github.com/user-attachments/assets/62c421ac-80d5-4bf2-96bd-a6dbd5260184" />
 
 ### 📥 Clonar el repositorio
 ```bash
